@@ -4,103 +4,132 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title> Glacial Moon Games </title>
-<link rel="icon" type="image/png" href="logoaba.png">
+<title>Glacial Moon Games</title>
+
+<link rel="icon" type="image/png" href="logo-icon.png">
 
 <style>
 
 *{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
+margin:0;
+padding:0;
+box-sizing:border-box;
 }
 
 body{
-    background:#232323;
-    color:#e6e6e6;
-    font-family: Arial, Helvetica, sans-serif;
-    text-align:center;
+background:#232323;
+color:#e6e6e6;
+font-family:Arial, Helvetica, sans-serif;
+text-align:center;
 }
 
 /* header */
 
 header{
-    padding:60px 20px 40px;
+padding:80px 20px 40px;
 }
 
 .logo{
-    width:440px;
+width:440px;
+margin-bottom:20px;
 }
-
-h1{
-    font-weight:300;
-    font-size:36px;
-    letter-spacing:2px;
-}
-
-/* description */
 
 .description{
-    max-width:600px;
-    margin:10px auto;
-    opacity:0.8;
-    line-height:1.6;
+max-width:600px;
+margin:30px auto;
+opacity:0.8;
+line-height:1.6;
 }
 
-/* games */
+/* main games */
 
 .games{
-    margin-top:30px;
+margin-top:30px;
 }
 
 .games h2{
-    font-weight:300;
-    margin-bottom:30px;
+font-weight:300;
+margin-bottom:30px;
 }
 
 .game-list{
-    display:flex;
-    justify-content:center;
-    gap:40px;
-    flex-wrap:wrap;
+display:flex;
+justify-content:center;
+gap:40px;
+flex-wrap:wrap;
 }
 
 .game{
-    border:1px solid #232323;
-    padding:20px;
-    width:220px;
-    transition:0.2s;
-    border-radius:12px;
-    overflow:hidden;
+border:1px solid #232323;
+padding:20px;
+width:220px;
+transition:0.2s;
+border-radius:12px;
+overflow:hidden;
+cursor:pointer;
 }
 
 .game:hover{
-    border-color:#666;
-    transform:translateY(-4px);
+border-color:#666;
+transform:translateY(-4px);
 }
 
 .game img{
-    width:100%;
-    margin-bottom:10px;
-    border-radius:12px;
+width:100%;
+margin-bottom:10px;
+border-radius:12px;
+}
+
+/* secondary games */
+
+.secondary-games{
+margin-top:70px;
+}
+
+.secondary-games h2{
+font-weight:300;
+margin-bottom:20px;
+}
+
+.secondary-list{
+display:flex;
+justify-content:center;
+gap:25px;
+flex-wrap:wrap;
+}
+
+.secondary-game{
+width:90px;
+transition:0.2s;
+}
+
+.secondary-game img{
+width:100%;
+border-radius:10px;
+margin-bottom:6px;
+}
+
+.secondary-game:hover{
+transform:translateY(-3px);
+opacity:1;
 }
 
 /* footer */
 
 footer{
-    margin-top:100px;
-    padding:40px;
-    font-size:14px;
-    opacity:0.6;
+margin-top:100px;
+padding:40px;
+font-size:14px;
+opacity:0.6;
 }
 
 a{
-    color:#ffffff;
-    text-decoration:none;
+color:#ffffff;
+text-decoration:none;
 }
 
 a:hover{
-    opacity:0.7;
+opacity:0.7;
 }
 
 /* MOBILE */
@@ -108,40 +137,37 @@ a:hover{
 @media (max-width:600px){
 
 .logo{
-    width:220px;
+width:220px;
 }
 
 header{
-    padding:60px 20px 20px;
+padding:60px 20px 20px;
 }
 
 .description{
-    max-width:90%;
-    font-size:15px;
-    margin:20px auto;
-}
-
-.games{
-    margin-top:20px;
+max-width:90%;
+font-size:15px;
+margin:20px auto;
 }
 
 .game-list{
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    gap:25px;
-    width:100%;
+flex-direction:column;
+align-items:center;
+gap:25px;
 }
 
 .game{
-    width:90%;
-    max-width:320px;
-    margin:0 auto;
+width:90%;
+max-width:320px;
+margin:0 auto;
 }
 
-h1{
-    font-size:28px;
+.secondary-list{
+gap:18px;
+}
+
+.secondary-game{
+width:70px;
 }
 
 }
@@ -164,11 +190,11 @@ An brazilian game studio focused on creating small, mobile, arcade like experien
 
 <section class="games">
 
-<h2>Main Games</h2>
+<h2>Games</h2>
 
 <div class="game-list">
 
-<a href="https://glacial-moon-games.itch.io/insectorama">
+<a href="https://glacial-moon-games.itch.io/insectorama" target="_blank">
 <div class="game">
 <img src="game1.png">
 <h3>Insectorama</h3>
@@ -176,15 +202,46 @@ An brazilian game studio focused on creating small, mobile, arcade like experien
 </div>
 </a>
 
-<a href="https://glacial-moon-games.itch.io/ellishouse">
+<a href="https://glacial-moon-games.itch.io/ellis-house" target="_blank">
 <div class="game">
 <img src="game2.png">
 <h3>Elli's House</h3>
-<p> Platformer made for the Gamejaaj 7</p>
+<p>Platformer made for the GameJaaj 7</p>
 </div>
 </a>
 
 </div>
+
+</section>
+
+
+<section class="secondary-games">
+
+<h2>Other Games</h2>
+
+<div class="secondary-list">
+
+<a href="https://glacial-moon-games.itch.io/whacking-zombies" target="_blank">
+<div class="secondary-game">
+<img src="whackingzombies.png">
+<p>Whacking Zombies</p>
+</div>
+</a>
+
+<a href="https://glacial-moon-games.itch.io/ship-away" target="_blank">
+<div class="secondary-game">
+<img src="shipaway.png">
+<p>Ship Away</p>
+</div>
+</a>
+
+<a href="https://glacial-moon-games.itch.io/elemental-battle" target="_blank">
+<div class="secondary-game">
+<img src="elementalbattle.png">
+<p>Elemental Battle</p>
+</div>
+</a>
+
 
 </section>
 
@@ -196,8 +253,8 @@ An brazilian game studio focused on creating small, mobile, arcade like experien
 </p>
 
 <p>
-<a href="https://x.com/Glacial_Moon_">Twitter</a> |
-<a href="https://glacial-moon-games.itch.io/">Itch.io</a> |
+<a href="https://x.com/Glacial_Moon_" target="_blank">Twitter</a> |
+<a href="https://glacial-moon-games.itch.io/" target="_blank">Itch.io</a> |
 <a href="#">Google Play</a>
 </p>
 
