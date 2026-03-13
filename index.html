@@ -105,7 +105,7 @@ a:hover{
 
 /* MOBILE */
 
-@media (max-width: 600px){
+@media (max-width:600px){
 
 .logo{
     width:220px;
@@ -118,6 +118,7 @@ header{
 .description{
     max-width:90%;
     font-size:15px;
+    margin:20px auto;
 }
 
 .games{
@@ -125,13 +126,18 @@ header{
 }
 
 .game-list{
+    display:flex;
     flex-direction:column;
     align-items:center;
+    justify-content:center;
     gap:25px;
+    width:100%;
 }
 
 .game{
-    width:85%;
+    width:90%;
+    max-width:320px;
+    margin:0 auto;
 }
 
 h1{
@@ -139,7 +145,6 @@ h1{
 }
 
 }
-
 
 </style>
 </head>
