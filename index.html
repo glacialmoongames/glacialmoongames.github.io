@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title> Glacial Moon Games </title>
+<link rel="icon" type="image/png" href="logoaba.png">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    background:#232323;
+    color:#e6e6e6;
+    font-family: Arial, Helvetica, sans-serif;
+    text-align:center;
+}
+
+/* header */
+
+header{
+    padding:60px 20px 40px;
+}
+
+.logo{
+    width:440px;
+}
+
+h1{
+    font-weight:300;
+    font-size:36px;
+    letter-spacing:2px;
+}
+
+/* description */
+
+.description{
+    max-width:600px;
+    margin:10px auto;
+    opacity:0.8;
+    line-height:1.6;
+}
+
+/* games */
+
+.games{
+    margin-top:30px;
+}
+
+.games h2{
+    font-weight:300;
+    margin-bottom:30px;
+}
+
+.game-list{
+    display:flex;
+    justify-content:center;
+    gap:40px;
+    flex-wrap:wrap;
+}
+
+.game{
+    border:1px solid #232323;
+    padding:20px;
+    width:220px;
+    transition:0.2s;
+    border-radius:12px;
+    overflow:hidden;
+}
+
+.game:hover{
+    border-color:#666;
+    transform:translateY(-4px);
+}
+
+.game img{
+    width:100%;
+    margin-bottom:10px;
+    border-radius:12px;
+}
+
+/* footer */
+
+footer{
+    margin-top:100px;
+    padding:40px;
+    font-size:14px;
+    opacity:0.6;
+}
+
+a{
+    color:#ffffff;
+    text-decoration:none;
+}
+
+a:hover{
+    opacity:0.7;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+
+<img src="logo.png" class="logo">
+
+<p class="description">
+An brazilian game studio focused on creating small, mobile, arcade like experiences.
+</p>
+
+</header>
+
+
+<section class="games">
+
+<h2>Main Games</h2>
+
+<div class="game-list">
+
+<a href="https://glacial-moon-games.itch.io/insectorama">
+<div class="game">
+<img src="game1.png">
+<h3>Insectorama</h3>
+<p>Arcade Roguelite about smashing critters</p>
+</div>
+</a>
+
+<a href="https://glacial-moon-games.itch.io/ellishouse">
+<div class="game">
+<img src="game2.png">
+<h3>Elli's House</h3>
+<p> Platformer made for the Gamejaaj 7</p>
+</div>
+</a>
+
+</div>
+
+</section>
+
+
+<footer>
+
+<p>
+© 2026 Glacial Moon Games
+</p>
+
+<p>
+<a href="https://x.com/Glacial_Moon_">Twitter</a> |
+<a href="https://glacial-moon-games.itch.io/">Itch.io</a> |
+<a href="#">Google Play</a>
+</p>
+
+</footer>
+
+</body>
+</html>
