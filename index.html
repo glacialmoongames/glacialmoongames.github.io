@@ -1,264 +1,269 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glacial Moon Games</title>
+    <link rel="icon" type="image/png" href="logoaba.png">
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+        }
 
-<title>Glacial Moon Games</title>
+        body{
+            background:#232323;
+            color:#e6e6e6;
+            font-family:Arial, Helvetica, sans-serif;
+            text-align:center;
+        }
 
-<link rel="icon" type="image/png" href="logoaba.png">
+        /* header */
+        header{
+            padding:80px 20px 40px;
+        }
 
-<style>
+        .logo{
+            width:440px;
+            margin-bottom:20px;
+        }
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-}
+        .description{
+            max-width:600px;
+            margin:30px auto;
+            opacity:0.8;
+            line-height:1.6;
+        }
 
-body{
-background:#232323;
-color:#e6e6e6;
-font-family:Arial, Helvetica, sans-serif;
-text-align:center;
-}
+        /* main games */
+        .games{
+            margin-top:30px;
+        }
 
-/* header */
+        .games h2{
+            font-weight:300;
+            margin-bottom:30px;
+        }
 
-header{
-padding:80px 20px 40px;
-}
+        .game-list{
+            display:flex;
+            justify-content:center;
+            gap:40px;
+            flex-wrap:wrap;
+        }
 
-.logo{
-width:440px;
-margin-bottom:20px;
-}
+        .game{
+            border:1px solid #232323;
+            padding:20px;
+            width:220px;
+            transition:0.2s;
+            border-radius:12px;
+            overflow:hidden;
+            cursor:pointer;
+        }
 
-.description{
-max-width:600px;
-margin:30px auto;
-opacity:0.8;
-line-height:1.6;
-}
+        .game:hover{
+            border-color:#666;
+            transform:translateY(-4px);
+        }
 
-/* main games */
+        .game img{
+            width:100%;
+            margin-bottom:10px;
+            border-radius:12px;
+        }
 
-.games{
-margin-top:30px;
-}
+        /* secondary games */
+        .secondary-games{
+            margin-top:70px;
+        }
 
-.games h2{
-font-weight:300;
-margin-bottom:30px;
-}
+        .secondary-games h2{
+            font-weight:300;
+            margin-bottom:20px;
+        }
 
-.game-list{
-display:flex;
-justify-content:center;
-gap:40px;
-flex-wrap:wrap;
-}
+        .secondary-list{
+            display:flex;
+            justify-content:center;
+            gap:25px;
+            flex-wrap:wrap;
+        }
 
-.game{
-border:1px solid #232323;
-padding:20px;
-width:220px;
-transition:0.2s;
-border-radius:12px;
-overflow:hidden;
-cursor:pointer;
-}
+        .secondary-game{
+            width:90px;
+            transition:0.2s;
+        }
 
-.game:hover{
-border-color:#666;
-transform:translateY(-4px);
-}
+        .secondary-game img,
+        .secondary-game-button{
+            width:100%;
+            aspect-ratio:1;
+            border-radius:10px;
+            margin-bottom:6px;
+        }
 
-.game img{
-width:100%;
-margin-bottom:10px;
-border-radius:12px;
-}
+        .secondary-game img{
+            object-fit:cover;
+        }
 
-/* secondary games */
+        .secondary-game-button{
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content:center;
+            gap:6px;
+            border:1px solid #7585a8;
+            background:linear-gradient(145deg, #20283a, #10141f);
+            box-shadow:inset 0 0 18px rgba(116, 148, 213, 0.18);
+            color:#f0f4ff;
+            font-weight:700;
+            letter-spacing:0.12em;
+        }
 
-.secondary-games{
-margin-top:70px;
-}
+        .play-symbol{
+            color:#91a9dc;
+            font-size:18px;
+            line-height:1;
+        }
 
-.secondary-games h2{
-font-weight:300;
-margin-bottom:20px;
-}
+        .secondary-game:hover{
+            transform:translateY(-3px);
+            opacity:1;
+        }
 
-.secondary-list{
-display:flex;
-justify-content:center;
-gap:25px;
-flex-wrap:wrap;
-}
+        /* footer */
+        footer{
+            margin-top:100px;
+            padding:40px;
+            font-size:14px;
+            opacity:0.6;
+        }
 
-.secondary-game{
-width:90px;
-transition:0.2s;
-}
+        a{
+            color:#ffffff;
+            text-decoration:none;
+        }
 
-.secondary-game img{
-width:100%;
-border-radius:10px;
-margin-bottom:6px;
-}
+        a:hover{
+            opacity:0.7;
+        }
 
-.secondary-game:hover{
-transform:translateY(-3px);
-opacity:1;
-}
+        /* MOBILE */
+        @media (max-width:600px){
+            .logo{
+                width:220px;
+            }
 
-/* footer */
+            header{
+                padding:60px 20px 20px;
+            }
 
-footer{
-margin-top:100px;
-padding:40px;
-font-size:14px;
-opacity:0.6;
-}
+            .description{
+                max-width:90%;
+                font-size:15px;
+                margin:20px auto;
+            }
 
-a{
-color:#ffffff;
-text-decoration:none;
-}
+            .game-list{
+                flex-direction:column;
+                align-items:center;
+                gap:25px;
+            }
 
-a:hover{
-opacity:0.7;
-}
+            .game{
+                width:90%;
+                max-width:320px;
+                margin:0 auto;
+            }
 
-/* MOBILE */
+            .secondary-list{
+                gap:18px;
+            }
 
-@media (max-width:600px){
-
-.logo{
-width:220px;
-}
-
-header{
-padding:60px 20px 20px;
-}
-
-.description{
-max-width:90%;
-font-size:15px;
-margin:20px auto;
-}
-
-.game-list{
-flex-direction:column;
-align-items:center;
-gap:25px;
-}
-
-.game{
-width:90%;
-max-width:320px;
-margin:0 auto;
-}
-
-.secondary-list{
-gap:18px;
-}
-
-.secondary-game{
-width:70px;
-}
-
-}
-
-</style>
+            .secondary-game{
+                width:70px;
+            }
+        }
+    </style>
 </head>
-
 <body>
 
-<header>
+    <header>
+        <img src="logo.png" class="logo" alt="Glacial Moon Games">
+        <p class="description">
+            An brazilian game studio focused on creating small, mobile, arcade like experiences.
+        </p>
+    </header>
 
-<img src="logo.png" class="logo">
+    <section class="games">
+        <h2>Games</h2>
 
-<p class="description">
-An brazilian game studio focused on creating small, mobile, arcade like experiences.
-</p>
+        <div class="game-list">
+            <a href="https://play.google.com/store/apps/details?id=com.glacialmoongames.insectorama" target="_blank" rel="noopener noreferrer">
+                <div class="game">
+                    <img src="game1.png" alt="Insectorama">
+                    <h3>Insectorama</h3>
+                    <p>Arcade Roguelite about smashing critters</p>
+                </div>
+            </a>
 
-</header>
+            <a href="https://glacial-moon-games.itch.io/ellishouse" target="_blank" rel="noopener noreferrer">
+                <div class="game">
+                    <img src="game2.png" alt="Elli's House">
+                    <h3>Elli's House</h3>
+                    <p>Platformer made for the GameJaaj 7</p>
+                </div>
+            </a>
+        </div>
+    </section>
 
+    <section class="secondary-games">
+        <h2>Other Games</h2>
 
-<section class="games">
+        <div class="secondary-list">
+            <a href="https://glacial-moon-games.itch.io/whacking-zombies" target="_blank" rel="noopener noreferrer">
+                <div class="secondary-game">
+                    <img src="whackingzombies.png" alt="Whacking Zombies">
+                    <p>Whacking Zombies</p>
+                </div>
+            </a>
 
-<h2>Games</h2>
+            <a href="https://glacial-moon-games.itch.io/ship-away" target="_blank" rel="noopener noreferrer">
+                <div class="secondary-game">
+                    <img src="shipaway.png" alt="Ship Away">
+                    <p>Ship Away</p>
+                </div>
+            </a>
 
-<div class="game-list">
+            <a href="https://glacial-moon-games.itch.io/elemental-battle" target="_blank" rel="noopener noreferrer">
+                <div class="secondary-game">
+                    <img src="elementalbattle.png" alt="Elemental Battle">
+                    <p>Elemental Battle</p>
+                </div>
+            </a>
 
-<a href="https://play.google.com/store/apps/details?id=com.glacialmoongames.insectorama" target="_blank">
-<div class="game">
-<img src="game1.png">
-<h3>Insectorama</h3>
-<p>Arcade Roguelite about smashing critters</p>
-</div>
-</a>
+            <a href="https://glacialmoongames.github.io/xadria-jogo/" target="_blank" rel="noopener noreferrer" aria-label="Play Véu">
+                <div class="secondary-game">
+                    <div class="secondary-game-button" aria-hidden="true">
+                        <span>VÉU</span>
+                        <span class="play-symbol">▶</span>
+                    </div>
+                    <p>Véu</p>
+                </div>
+            </a>
+        </div>
+    </section>
 
-<a href="https://glacial-moon-games.itch.io/ellishouse" target="_blank">
-<div class="game">
-<img src="game2.png">
-<h3>Elli's House</h3>
-<p>Platformer made for the GameJaaj 7</p>
-</div>
-</a>
-
-</div>
-
-</section>
-
-
-<section class="secondary-games">
-
-<h2>Other Games</h2>
-
-<div class="secondary-list">
-
-<a href="https://glacial-moon-games.itch.io/whacking-zombies" target="_blank">
-<div class="secondary-game">
-<img src="whackingzombies.png">
-<p>Whacking Zombies</p>
-</div>
-</a>
-
-<a href="https://glacial-moon-games.itch.io/ship-away" target="_blank">
-<div class="secondary-game">
-<img src="shipaway.png">
-<p>Ship Away</p>
-</div>
-</a>
-
-<a href="https://glacial-moon-games.itch.io/elemental-battle" target="_blank">
-<div class="secondary-game">
-<img src="elementalbattle.png">
-<p>Elemental Battle</p>
-</div>
-</a>
-
-
-</section>
-
-
-<footer>
-
-<p>
-© 2026 Glacial Moon Games
-</p>
-
-<p>
-<a href="https://x.com/Glacial_Moon_" target="_blank">Twitter</a> |
-<a href="https://glacial-moon-games.itch.io/" target="_blank">Itch.io</a> |
-<a href="#">Google Play</a>
-</p>
-
-</footer>
+    <footer>
+        <p>© 2026 Glacial Moon Games</p>
+        <p>
+            <a href="https://x.com/Glacial_Moon_" target="_blank" rel="noopener noreferrer">Twitter</a> |
+            <a href="https://glacial-moon-games.itch.io/" target="_blank" rel="noopener noreferrer">Itch.io</a> |
+            <a href="#">Google Play</a>
+        </p>
+    </footer>
 
 </body>
 </html>
