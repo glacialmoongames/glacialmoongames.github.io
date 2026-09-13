@@ -1,0 +1,49 @@
+name: Build Elli's House web port
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - 'ellishouse/game/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ellis-house-web
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out website
+        uses: actions/checkout@v4
+      - name: Check out Elli's House port
+        uses: actions/checkout@v4
+        with:
+          repository: glacialmoongames/EllisHouseCpp
+          path: .ellis-port
+      - name: Install Emscripten
+        uses: mymindstorm/setup-emsdk@v14
+        with:
+          version: 3.1.64
+          actions-cache-folder: emsdk-cache
+      - name: Build browser version
+        run: |
+          emcmake cmake -S .ellis-port -B .ellis-build -DCMAKE_BUILD_TYPE=Release
+          cmake --build .ellis-build --parallel 2
+      - name: Publish browser files
+        run: |
+          mkdir -p ellishouse/game
+          cp .ellis-port/ellis_house.html ellishouse/game/index.html
+          cp .ellis-port/ellis_house.js .ellis-port/ellis_house.wasm .ellis-port/ellis_house.data ellishouse/game/
+          touch ellishouse/game/.nojekyll
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f ellishouse/game
+          if ! git diff --cached --quiet; then
+            git commit -m "Publish Elli's House web build"
+            git push
+          fi
