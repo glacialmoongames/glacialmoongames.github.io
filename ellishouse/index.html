@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Elli's House — Glacial Moon Games</title>
+  <link rel="icon" type="image/png" href="../logoaba.png">
+  <style>
+    *{box-sizing:border-box}
+    body{margin:0;background:#232323;color:#e6e6e6;font-family:Arial,Helvetica,sans-serif;text-align:center}
+    header{padding:34px 20px 20px}
+    .studio{width:min(300px,70vw);opacity:.9}
+    main{width:min(980px,calc(100% - 28px));margin:auto}
+    h1{font-weight:300;margin:14px 0 22px}
+    .player{position:relative;width:100%;aspect-ratio:384/218;max-height:72vh;background:#111;border:1px solid #4b4b4b;border-radius:12px;overflow:hidden;box-shadow:0 16px 45px #0008}
+    .player iframe{width:100%;height:100%;border:0;display:block;background:#000}
+    .launch{position:absolute;inset:0;display:grid;place-items:center;background:#181818 url("../game2.png") center/180px no-repeat}
+    .launch button,.links a{border:1px solid #777;border-radius:9px;background:#343434;color:#fff;font:700 17px Arial,sans-serif;padding:12px 28px;cursor:pointer}
+    .launch button:hover,.links a:hover{background:#4b4b4b;transform:translateY(-2px)}
+    .intro{max-width:660px;margin:28px auto 18px;line-height:1.6;opacity:.85}
+    .links{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin:24px 0 70px}
+    .links a{text-decoration:none;font-size:15px}
+    footer{padding:25px;opacity:.6;font-size:14px}
+    @media(max-width:600px){header{padding-top:24px}.player{border-radius:8px}.launch{background-size:120px}.links{flex-direction:column}.links a{display:block}}
+  </style>
+</head>
+<body>
+  <header><a href="../"><img class="studio" src="../logo.png" alt="Glacial Moon Games"></a></header>
+  <main>
+    <h1>Elli's House</h1>
+    <section class="player" aria-label="Elli's House web game">
+      <div class="launch" id="launch"><button id="play" type="button">Play</button></div>
+    </section>
+    <p class="intro">Escape the house in this platform adventure originally made by the Glacial Moon Games team for GameJaaj 7.</p>
+    <nav class="links" aria-label="Elli's House versions">
+      <a href="https://github.com/glacialmoongames/EllisHouseCpp/releases" target="_blank" rel="noopener noreferrer">C++ ports</a>
+      <a href="https://glacial-moon-games.itch.io/ellishouse" target="_blank" rel="noopener noreferrer">Original on itch.io</a>
+    </nav>
+  </main>
+  <footer>© 2026 Glacial Moon Games</footer>
+  <script>
+    document.getElementById('play').addEventListener('click',function(){
+      var player=document.querySelector('.player');
+      var frame=document.createElement('iframe');
+      frame.src='./game/';
+      frame.title="Play Elli's House";
+      frame.allow='autoplay; fullscreen; gamepad';
+      player.replaceChildren(frame);
+      frame.focus();
+    });
+  </script>
+</body>
+</html>
