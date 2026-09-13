@@ -1,4 +1,5 @@
 name: Build Elli's House web port
+# Rebuilds the embedded WebAssembly player from the current port source.
 
 on:
   push:
