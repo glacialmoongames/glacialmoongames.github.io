@@ -28,7 +28,7 @@
     .brand-icon{width:23px;height:23px;flex:0 0 23px;fill:currentColor}
     footer{padding:25px;opacity:.6;font-size:14px}
     @media(max-width:600px){header{padding-top:24px}.player{width:100%;border-radius:8px}.launch{background-size:120px}.links{flex-direction:column;align-items:stretch}.links a{display:flex;width:100%}}
-    @media(hover:none) and (pointer:coarse){.player.running{aspect-ratio:auto}.desktop-help{display:none}.mobile-help{display:block}}
+    @media(hover:none) and (pointer:coarse){.player.running{aspect-ratio:384/372}.desktop-help{display:none}.mobile-help{display:block}}
   </style>
 </head>
 <body>
@@ -64,15 +64,6 @@
   <footer>© 2026 Glacial Moon Games</footer>
   <script>
     var player=document.querySelector('.player');
-    var touchPointer=matchMedia('(hover:none) and (pointer:coarse)');
-    function sizePlayer(){
-      if(player.classList.contains('running')&&touchPointer.matches){
-        player.style.height=(player.clientWidth*218/384+154)+'px';
-      }else player.style.removeProperty('height');
-    }
-    new ResizeObserver(sizePlayer).observe(player);
-    if(touchPointer.addEventListener)touchPointer.addEventListener('change',sizePlayer);
-    addEventListener('resize',sizePlayer,{passive:true});
     addEventListener('keydown',function(event){
       if(document.querySelector('.player iframe')&&['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(event.code))event.preventDefault();
     },{passive:false});
@@ -83,7 +74,6 @@
       frame.allow='autoplay; fullscreen; gamepad';
       player.classList.add('running');
       player.replaceChildren(frame);
-      sizePlayer();
       frame.focus();
     });
   </script>
