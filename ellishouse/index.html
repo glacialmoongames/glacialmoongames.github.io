@@ -21,7 +21,7 @@
     .links{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin:24px 0 70px}
     .links a{text-decoration:none;font-size:15px}
     footer{padding:25px;opacity:.6;font-size:14px}
-    @media(max-width:600px){header{padding-top:24px}.player{border-radius:8px}.launch{background-size:120px}.links{flex-direction:column}.links a{display:block}}
+    @media(max-width:600px){header{padding-top:24px}.player{height:calc((100vw - 28px)*.567708 + 154px);max-height:none;aspect-ratio:auto;border-radius:8px}.launch{background-size:120px}.links{flex-direction:column}.links a{display:block}}
   </style>
 </head>
 <body>
@@ -39,6 +39,9 @@
   </main>
   <footer>© 2026 Glacial Moon Games</footer>
   <script>
+    addEventListener('keydown',function(event){
+      if(document.querySelector('.player iframe')&&['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(event.code))event.preventDefault();
+    },{passive:false});
     document.getElementById('play').addEventListener('click',function(){
       var player=document.querySelector('.player');
       var frame=document.createElement('iframe');
