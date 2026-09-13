@@ -1,6 +1,6 @@
 name: Build Elli's House web port
 # Rebuilds the embedded WebAssembly player from the current port source.
-# Uses a non-blocking browser main loop, Asyncify, and the larger initialization stack.
+# Uses a pixel-perfect responsive shell, mobile controls, Asyncify, and the larger initialization stack.
 
 on:
   push:
