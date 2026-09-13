@@ -1,6 +1,6 @@
 name: Build Elli's House web port
 # Rebuilds the embedded WebAssembly player from the current port source.
-# Includes the larger WebAssembly stack required by complete room initialization.
+# Uses browser-native frame scheduling and the larger initialization stack.
 
 on:
   push:
