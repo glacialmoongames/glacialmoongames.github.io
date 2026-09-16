@@ -343,5 +343,22 @@
         </p>
     </footer>
 
+<script>
+(function(){
+    const preferredLanguage=(navigator.languages&&navigator.languages[0])||navigator.language||"en";
+    if(!/^pt(?:-|$)/i.test(preferredLanguage)) return;
+    document.documentElement.lang="pt-BR";
+    document.querySelector(".description").textContent="Um estúdio brasileiro de jogos focado em criar experiências pequenas, mobile e com estilo arcade.";
+    document.querySelector(".games > h2").textContent="Jogos";
+    document.querySelector('a[href*="insectorama"] .game p').textContent="Roguelite arcade sobre esmagar insetos";
+    document.querySelector('a[href*="confluxo"] .game p').textContent="Jogo estratégico de cartas entre arquétipos";
+    document.querySelector('a[href="ellishouse/"] .game p').textContent="Aventura de plataforma sobre escapar de uma casa assombrada";
+    document.querySelector(".secondary-games > h2").textContent="Outros Jogos";
+    document.querySelector('a[href*="confluxo"]').setAttribute("aria-label","Jogar Confluxo");
+    document.querySelector('a[href="ellishouse/"]').setAttribute("aria-label","Jogar Elli's House");
+    const email=document.querySelector('a[href^="mailto:"]');
+    if(email){email.textContent="E-mail";email.setAttribute("aria-label","E-mail: glacialmoongames@gmail.com");}
+})();
+</script>
 </body>
 </html>

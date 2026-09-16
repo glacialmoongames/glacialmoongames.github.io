@@ -98,5 +98,26 @@
       frame.focus();
     });
   </script>
+  <script>
+    (function(){
+      const preferredLanguage=(navigator.languages&&navigator.languages[0])||navigator.language||"en";
+      if(!/^pt(?:-|$)/i.test(preferredLanguage)) return;
+      document.documentElement.lang="pt-BR";
+      document.getElementById("play").textContent="Jogar";
+      document.querySelector(".player").setAttribute("aria-label","Jogo web Elli's House");
+      document.querySelector(".howto").setAttribute("aria-label","Como jogar");
+      document.querySelector(".desktop-help h2").textContent="Como Jogar — PC";
+      document.querySelector(".desktop-help p").textContent="Mover: A / D ou ← / → · Pular: Espaço · Agachar, deslizar e ler placas: S ou ↓ · Dash: W + direção · Pausar: Esc";
+      document.querySelector(".mobile-help h2").textContent="Como Jogar — Celular";
+      document.querySelector(".mobile-help p").textContent="Use o direcional virtual para mover, agachar e ler placas · PULAR pula · DASH + direção executa o dash · PAUSE pausa";
+      document.querySelector(".intro").textContent="Escape da casa nesta aventura de plataforma criada originalmente pela equipe da Glacial Moon Games para a GameJaaj 7.";
+      document.querySelector(".trailers").setAttribute("aria-label","Trailers de Elli's House");
+      document.querySelectorAll(".trailer iframe").forEach(function(frame,index){frame.title="Trailer "+(index+1)+" de Elli's House";});
+      document.querySelector(".links").setAttribute("aria-label","Versões de Elli's House");
+      const labels=document.querySelectorAll(".links a span");
+      if(labels[0]) labels[0].textContent="Versões para PC - GBA - PSP - 3DS";
+      if(labels[1]) labels[1].textContent="Versão da Game Jam";
+    })();
+  </script>
 </body>
 </html>
