@@ -286,19 +286,27 @@
             }
 
             .footer-scene{
-                height:820px;
+                display:flex;
+                height:auto;
+                flex-direction:column;
+                overflow:visible;
             }
 
             .footer-art{
+                order:2;
                 width:100%;
-                height:100%;
-                object-fit:cover;
+                height:auto;
+                object-fit:contain;
                 object-position:center;
             }
 
             .about{
-                top:calc(45% - 18px);
+                position:static;
+                order:1;
                 width:220px;
+                margin:0 auto 28px;
+                text-align:center;
+                transform:none;
             }
 
             header{
