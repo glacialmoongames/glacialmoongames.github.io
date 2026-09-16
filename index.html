@@ -42,8 +42,9 @@
         }
 
         .games h2{
-            font-weight:300;
             margin-bottom:30px;
+            font-size:28px;
+            font-weight:700;
         }
 
         .game-list{
@@ -134,8 +135,9 @@
         }
 
         .secondary-games h2{
-            font-weight:300;
             margin-bottom:20px;
+            font-size:28px;
+            font-weight:700;
         }
 
         .secondary-list{
@@ -215,6 +217,7 @@
         .about h2{
             margin:0 0 18px;
             font-size:28px;
+            font-weight:700;
         }
 
         .about p{
@@ -297,7 +300,7 @@
     </header>
 
     <section class="games">
-        <h2>Games</h2>
+        <h2>Projects</h2>
 
         <div class="game-list">
             <a href="https://play.google.com/store/apps/details?id=com.glacialmoongames.insectorama" target="_blank" rel="noopener noreferrer">
@@ -335,7 +338,7 @@
     </section>
 
     <section class="secondary-games">
-        <h2>Other Games</h2>
+        <h2>Smaller Games</h2>
 
         <div class="secondary-list">
             <a href="https://glacial-moon-games.itch.io/whacking-zombies" target="_blank" rel="noopener noreferrer">
@@ -385,11 +388,11 @@
     if(!/^pt(?:-|$)/i.test(preferredLanguage)) return;
     document.documentElement.lang="pt-BR";
     document.querySelector(".description").textContent="Um estúdio brasileiro de jogos focado em criar experiências pequenas, mobile e com estilo arcade.";
-    document.querySelector(".games > h2").textContent="Jogos";
+    document.querySelector(".games > h2").textContent="Projetos";
     document.querySelector('a[href*="insectorama"] .game p').textContent="Roguelite arcade sobre esmagar insetos";
     document.querySelector('a[href*="confluxo"] .game p').textContent="Protótipo de jogo de cartas";
     document.querySelector('a[href="ellishouse/"] .game p').textContent="Plataformer feito para uma Game Jam";
-    document.querySelector(".secondary-games > h2").textContent="Outros Jogos";
+    document.querySelector(".secondary-games > h2").textContent="Jogos menores";
     document.getElementById("about-title").textContent="Sobre mim";
     document.getElementById("about-text").textContent="Olá, me chamo Daniel Giovanni, sou o game designer por trás da Glacial Moon Games, sou apaixonado por jogos desde de a infância, tanto os digitais como analógicos. Com os projetos que faço quero transmitir essa paixão que tenho a mídia.";
     document.getElementById("about-project").textContent="Agora estou lançando meu maior projeto até então, Insectorama, um jogo estilo arcade para Android. Passei anos desenvolvendo esse jogo, fazendo artes e código a mão e com a ajuda de grandes artistas e programadores pelo caminho.";
