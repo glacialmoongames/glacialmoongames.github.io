@@ -208,15 +208,15 @@
             position:absolute;
             z-index:1;
             top:33%;
-            left:50%;
+            right:clamp(20px,6vw,120px);
             width:440px;
             max-width:calc(100% - 40px);
             margin:0;
             padding:20px;
             border-radius:12px;
-            text-align:center;
+            text-align:right;
             text-shadow:0 1px 0 #232323,0 2px 0 #232323;
-            transform:translate(-50%,-50%);
+            transform:translateY(-50%);
         }
 
         .about h2{
