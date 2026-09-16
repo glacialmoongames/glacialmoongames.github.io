@@ -206,6 +206,9 @@
             width:440px;
             max-width:calc(100% - 40px);
             margin:100px auto 0;
+            padding:20px;
+            border:1px solid #666;
+            border-radius:12px;
             text-align:center;
         }
 
@@ -219,6 +222,10 @@
             color:#cfcfcf;
             font-size:16px;
             line-height:1.7;
+        }
+
+        .about p + p{
+            margin-top:18px;
         }
 
         /* footer */
@@ -359,6 +366,7 @@
     <section class="about" aria-labelledby="about-title">
         <h2 id="about-title">About me</h2>
         <p id="about-text">Hi, i am Daniel Giovanni, the game designer responsible for the Glacial Moon Games, i am deeply in love with gaming in general, video games, board games and all that surround them, always trying to show my love for the media in my projects.</p>
+        <p id="about-project">I am now releasing my biggest project yet, Insectorama, an arcade-style game for Android. I spent years developing this game, creating its art and code by hand, with the help of great artists and programmers along the way.</p>
     </section>
 
     <footer>
@@ -383,7 +391,8 @@
     document.querySelector('a[href="ellishouse/"] .game p').textContent="Plataformer feito para uma Game Jam";
     document.querySelector(".secondary-games > h2").textContent="Outros Jogos";
     document.getElementById("about-title").textContent="Sobre mim";
-    document.getElementById("about-text").textContent="Olá, me chamo Daniel Giovanni, sou o game designer por trás da Glacial Moon Games, sou apaixonado por jogos desde de a infância, tanto os digitais como analógicos e com os projetos que faço quero transmitir essa paixão que tenho a mídia.";
+    document.getElementById("about-text").textContent="Olá, me chamo Daniel Giovanni, sou o game designer por trás da Glacial Moon Games, sou apaixonado por jogos desde de a infância, tanto os digitais como analógicos. Com os projetos que faço quero transmitir essa paixão que tenho a mídia.";
+    document.getElementById("about-project").textContent="Agora estou lançando meu maior projeto até então, Insectorama, um jogo estilo arcade para Android. Passei anos desenvolvendo esse jogo, fazendo artes e código a mão e com a ajuda de grandes artistas e programadores pelo caminho.";
     document.querySelector('a[href*="confluxo"]').setAttribute("aria-label","Jogar Confluxo");
     document.querySelector('a[href="ellishouse/"]').setAttribute("aria-label","Jogar Elli's House");
     const email=document.querySelector('a[href^="mailto:"]');
