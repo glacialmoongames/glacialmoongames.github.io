@@ -215,7 +215,7 @@
             padding:20px;
             border-radius:12px;
             text-align:center;
-            text-shadow:-2px -2px 0 #232323,2px -2px 0 #232323,-2px 2px 0 #232323,2px 2px 0 #232323;
+            text-shadow:0 1px 0 #232323;
             transform:translate(-50%,-50%);
         }
 
@@ -253,6 +253,7 @@
         .footer-scene{
             position:relative;
             width:100%;
+            height:clamp(560px,40vw,945px);
             margin-bottom:36px;
             overflow:hidden;
         }
@@ -260,7 +261,9 @@
         .footer-art{
             display:block;
             width:100%;
-            height:auto;
+            height:100%;
+            object-fit:cover;
+            object-position:center;
         }
 
         footer > p{
@@ -283,7 +286,7 @@
             }
 
             .footer-scene{
-                height:760px;
+                height:820px;
             }
 
             .footer-art{
@@ -294,7 +297,7 @@
             }
 
             .about{
-                top:42%;
+                top:45%;
                 width:220px;
             }
 
