@@ -243,6 +243,12 @@
             text-underline-offset:3px;
         }
 
+        .about .artist-link{
+            color:#f47b20;
+            font-weight:700;
+            text-decoration:none;
+        }
+
         /* footer */
         footer{
             margin-top:80px;
@@ -424,7 +430,7 @@
             <img class="footer-art" src="fundo-gmg.png?v=2bd8f15b" alt="">
             <section class="about" aria-labelledby="about-title">
                 <h2 id="about-title">About me</h2>
-                <p id="about-text">Hi, i am Daniel Giovanni, the game designer responsible for the Glacial Moon Games, i am deeply in love with gaming in general, video games, board games and all that surround them, always trying to show my love for the media in my projects.</p>
+                <p id="about-text">Hi, i am Daniel Giovanni, the game designer and <a class="artist-link" href="https://www.artstation.com/anniezin" target="_blank" rel="noopener noreferrer">artist</a> behind Glacial Moon Games, i am deeply in love with gaming in general, video games, board games and all that surround them, always trying to show my love for the media in my projects.</p>
                 <p id="about-project">I am now releasing my biggest project yet, <a class="insectorama-link" href="https://play.google.com/store/apps/details?id=com.glacialmoongames.insectorama" target="_blank" rel="noopener noreferrer">Insectorama</a>, an arcade-style game for Android. I spent years developing this game, creating its art and code by hand, with the help of great artists and programmers along the way.</p>
             </section>
         </div>
@@ -448,7 +454,7 @@
     document.querySelector('a[href="ellishouse/"] .game p').textContent="Plataformer feito para uma Game Jam";
     document.querySelector(".secondary-games > h2").textContent="Jogos menores";
     document.getElementById("about-title").textContent="Sobre mim";
-    document.getElementById("about-text").textContent="Olá, me chamo Daniel Giovanni, sou o game designer por trás da Glacial Moon Games, sou apaixonado por jogos desde de a infância, tanto os digitais como analógicos. Com os projetos que faço quero transmitir essa paixão que tenho a mídia.";
+    document.getElementById("about-text").innerHTML='Olá, me chamo Daniel Giovanni, sou o game designer e <a class="artist-link" href="https://www.artstation.com/anniezin" target="_blank" rel="noopener noreferrer">artista</a> por trás da Glacial Moon Games, sou apaixonado por jogos desde de a infância, tanto os digitais como analógicos. Com os projetos que faço quero transmitir essa paixão que tenho a mídia.';
     document.getElementById("about-project").innerHTML='Agora estou lançando meu maior projeto até então, <a class="insectorama-link" href="https://play.google.com/store/apps/details?id=com.glacialmoongames.insectorama" target="_blank" rel="noopener noreferrer">Insectorama</a>, um jogo estilo arcade para Android. Passei anos desenvolvendo esse jogo, fazendo artes e código a mão, com a ajuda de grandes artistas e programadores pelo caminho.';
     document.querySelector('a[href*="confluxo"]').setAttribute("aria-label","Jogar Confluxo");
     document.querySelector('a[href="ellishouse/"]').setAttribute("aria-label","Jogar Elli's House");
