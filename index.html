@@ -204,6 +204,37 @@
             opacity:1;
         }
 
+        /* gallery */
+        .gallery-callout{
+            margin:72px auto 0;
+            padding:0 20px;
+        }
+
+        .gallery-button{
+            display:inline-flex;
+            align-items:center;
+            gap:12px;
+            padding:15px 24px;
+            border:1px solid #725a70;
+            border-radius:12px;
+            background:#584057;
+            color:#f0f4ff;
+            font-weight:700;
+            letter-spacing:0.08em;
+            transition:0.2s;
+        }
+
+        .gallery-button:hover{
+            border-color:#91a9dc;
+            transform:translateY(-3px);
+            opacity:1;
+        }
+
+        .gallery-button span{
+            color:#b9c9ec;
+            font-size:20px;
+        }
+
         .about{
             position:absolute;
             z-index:1;
@@ -425,6 +456,13 @@
         </div>
     </section>
 
+    <section class="gallery-callout" aria-label="Gallery">
+        <a class="gallery-button" href="gallery.html">
+            <span aria-hidden="true">✦</span>
+            Gallery
+        </a>
+    </section>
+
     <footer>
         <div class="footer-scene">
             <img class="footer-art" src="fundo-gmg.png?v=2bd8f15b" alt="">
@@ -453,6 +491,7 @@
     document.querySelector('a[href*="insectorama"] .game p').textContent="Roguelite arcade sobre esmagar insetos";
     document.querySelector('a[href="ellishouse/"] .game p').textContent="Plataformer feito para uma Game Jam";
     document.querySelector(".secondary-games > h2").textContent="Jogos menores";
+    document.querySelector(".gallery-button").innerHTML='<span aria-hidden="true">✦</span> Galeria';
     document.getElementById("about-title").textContent="Sobre mim";
     document.getElementById("about-text").innerHTML='Olá, me chamo Daniel Giovanni, sou o game designer e <a class="artist-link" href="https://www.artstation.com/anniezin" target="_blank" rel="noopener noreferrer">artista</a> por trás da Glacial Moon Games, sou apaixonado por jogos desde a infância, tanto os digitais como analógicos. Com os projetos que faço quero transmitir essa paixão que tenho a mídia.';
     document.getElementById("about-project").innerHTML='Agora estou lançando meu maior projeto até então, <a class="insectorama-link" href="https://play.google.com/store/apps/details?id=com.glacialmoongames.insectorama" target="_blank" rel="noopener noreferrer">Insectorama</a>, um jogo estilo arcade para Android. Passei anos desenvolvendo esse jogo, fazendo artes e código a mão, com a ajuda de grandes artistas e programadores pelo caminho.';
