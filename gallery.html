@@ -48,17 +48,6 @@
             margin-bottom:24px;
         }
 
-        .back-link{
-            position:absolute;
-            top:26px;
-            left:30px;
-            display:inline-flex;
-            align-items:center;
-            gap:8px;
-            color:#b9c9ec;
-            font-size:14px;
-        }
-
         h1{
             font-size:clamp(30px, 5vw, 48px);
             font-weight:300;
@@ -159,14 +148,13 @@
 
         .lightbox-layout{
             display:grid;
-            grid-template-rows:auto minmax(0, 1fr) auto;
+            grid-template-rows:auto minmax(0, 1fr);
             width:100%;
             height:100%;
             padding:18px;
         }
 
-        .lightbox-header,
-        .lightbox-footer{
+        .lightbox-header{
             display:flex;
             align-items:center;
             justify-content:space-between;
@@ -220,30 +208,11 @@
             margin:auto;
         }
 
-        .lightbox-footer{
-            padding-top:14px;
-            justify-content:center;
-        }
-
         .lightbox-nav{
             display:none;
             width:42px;
             height:42px;
             font-size:21px;
-        }
-
-        .download-button{
-            display:inline-flex;
-            align-items:center;
-            justify-content:center;
-            min-height:42px;
-            padding:0 18px;
-            border:1px solid #725a70;
-            border-radius:10px;
-            background:#584057;
-            font-size:14px;
-            font-weight:700;
-            letter-spacing:0.04em;
         }
 
         footer{
@@ -261,11 +230,6 @@
 
             .logo{
                 width:220px;
-            }
-
-            .back-link{
-                top:24px;
-                left:20px;
             }
 
             main{
@@ -292,14 +256,6 @@
                 padding:10px;
             }
 
-            .lightbox-footer{
-                gap:10px;
-            }
-
-            .download-button{
-                flex:1;
-                padding-inline:10px;
-            }
         }
 
         @media (prefers-reduced-motion:reduce){
@@ -316,7 +272,6 @@
 </head>
 <body>
     <header>
-        <a class="back-link" href="index.html" aria-label="Back to home">← Back to home</a>
         <a href="index.html"><img src="logo.png" class="logo" alt="Glacial Moon Games"></a>
         <h1>Gallery</h1>
         <p class="intro">Concept art, sketches and artwork from our games.</p>
@@ -410,11 +365,6 @@
             <div class="lightbox-stage">
                 <img class="lightbox-image" src="" alt="">
             </div>
-            <div class="lightbox-footer">
-                <button class="lightbox-nav previous-image" type="button" aria-label="Previous image">‹</button>
-                <a class="download-button" href="" download>↓ Download WebP</a>
-                <button class="lightbox-nav next-image" type="button" aria-label="Next image">›</button>
-            </div>
         </div>
     </dialog>
 
@@ -425,18 +375,15 @@
         if (/^pt(?:-|$)/i.test(preferredLanguage)) {
             document.documentElement.lang = 'pt-BR';
             document.title = 'Galeria | Glacial Moon Games';
-            document.querySelector('.back-link').textContent = '← Voltar ao início';
             document.querySelector('h1').textContent = 'Galeria';
             document.querySelector('.intro').textContent = 'Artes conceituais, rascunhos e ilustrações dos nossos jogos.';
             document.querySelector('#misc-title').textContent = 'Diversos';
-            document.querySelector('.download-button').textContent = '↓ Baixar WebP';
         }
 
         const items = [...document.querySelectorAll('.gallery-item')];
         const lightbox = document.querySelector('#lightbox');
         const lightboxImage = lightbox.querySelector('.lightbox-image');
         const lightboxTitle = lightbox.querySelector('.lightbox-title');
-        const downloadButton = lightbox.querySelector('.download-button');
         const lightboxStage = lightbox.querySelector('.lightbox-stage');
         let currentIndex = 0;
 
@@ -459,8 +406,6 @@
             lightboxImage.src = source;
             lightboxImage.alt = item.querySelector('img').alt;
             lightboxTitle.textContent = title;
-            downloadButton.href = source;
-            downloadButton.download = source.split('/').pop();
             lightboxStage.scrollTo({ top: 0, left: 0 });
         }
 
@@ -472,9 +417,6 @@
         });
 
         lightbox.querySelector('.close-button').addEventListener('click', () => lightbox.close());
-        lightbox.querySelector('.previous-image').addEventListener('click', () => showImage(currentIndex - 1));
-        lightbox.querySelector('.next-image').addEventListener('click', () => showImage(currentIndex + 1));
-
         lightbox.addEventListener('click', (event) => {
             if (event.target === lightbox) lightbox.close();
         });
