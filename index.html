@@ -206,26 +206,55 @@
 
         /* gallery */
         .gallery-callout{
+            width:min(920px, calc(100% - 40px));
             margin:72px auto 0;
-            padding:0 20px;
         }
 
-        .gallery-button{
-            display:inline-flex;
-            align-items:center;
-            padding:12px 20px;
-            border:1px solid #555;
-            border-radius:6px;
-            background:#232323;
+        .gallery-preview{
+            display:block;
             color:#e6e6e6;
-            font-weight:400;
-            transition:0.2s;
         }
 
-        .gallery-button:hover{
-            border-color:#888;
-            background:#292929;
+        .gallery-strip{
+            display:grid;
+            grid-template-columns:0.85fr 1.4fr 1fr;
+            gap:8px;
+            height:clamp(150px, 22vw, 250px);
+            overflow:hidden;
+        }
+
+        .gallery-strip img{
+            display:block;
+            width:100%;
+            height:100%;
+            object-fit:cover;
+            transition:opacity 0.2s;
+        }
+
+        .gallery-strip img:first-child{
+            object-position:center 42%;
+        }
+
+        .gallery-link{
+            display:inline-block;
+            margin-top:18px;
+            padding-bottom:4px;
+            border-bottom:1px solid #777;
+            font-size:18px;
+            font-weight:400;
+            letter-spacing:0.02em;
+        }
+
+        .gallery-preview:hover{
             opacity:1;
+        }
+
+        .gallery-preview:hover .gallery-strip img{
+            opacity:0.86;
+        }
+
+        .gallery-preview:hover .gallery-link{
+            border-color:#fff;
         }
 
         .about{
@@ -369,6 +398,21 @@
             .secondary-game{
                 width:70px;
             }
+
+            .gallery-callout{
+                width:calc(100% - 28px);
+                margin-top:60px;
+            }
+
+            .gallery-strip{
+                gap:4px;
+                height:135px;
+            }
+
+            .gallery-link{
+                margin-top:14px;
+                font-size:16px;
+            }
         }
     </style>
 </head>
@@ -450,7 +494,14 @@
     </section>
 
     <section class="gallery-callout" aria-label="Gallery">
-        <a class="gallery-button" href="gallery.html">Gallery</a>
+        <a class="gallery-preview" href="gallery.html">
+            <span class="gallery-strip" aria-hidden="true">
+                <img src="gallery/ellis-house/ellis-house-print.webp" alt="" loading="lazy" decoding="async">
+                <img src="gallery/insectorama/banner.webp" alt="" loading="lazy" decoding="async">
+                <img src="gallery/tori/psp-wallpaper.webp" alt="" loading="lazy" decoding="async">
+            </span>
+            <span class="gallery-link">View gallery</span>
+        </a>
     </section>
 
     <footer>
@@ -481,7 +532,7 @@
     document.querySelector('a[href*="insectorama"] .game p').textContent="Roguelite arcade sobre esmagar insetos";
     document.querySelector('a[href="ellishouse/"] .game p').textContent="Plataformer feito para uma Game Jam";
     document.querySelector(".secondary-games > h2").textContent="Jogos menores";
-    document.querySelector(".gallery-button").textContent="Galeria";
+    document.querySelector(".gallery-link").textContent="Ver galeria";
     document.getElementById("about-title").textContent="Sobre mim";
     document.getElementById("about-text").innerHTML='Olá, me chamo Daniel Giovanni, sou o game designer e <a class="artist-link" href="https://www.artstation.com/anniezin" target="_blank" rel="noopener noreferrer">artista</a> por trás da Glacial Moon Games, sou apaixonado por jogos desde a infância, tanto os digitais como analógicos. Com os projetos que faço quero transmitir essa paixão que tenho a mídia.';
     document.getElementById("about-project").innerHTML='Agora estou lançando meu maior projeto até então, <a class="insectorama-link" href="https://play.google.com/store/apps/details?id=com.glacialmoongames.insectorama" target="_blank" rel="noopener noreferrer">Insectorama</a>, um jogo estilo arcade para Android. Passei anos desenvolvendo esse jogo, fazendo artes e código a mão, com a ajuda de grandes artistas e programadores pelo caminho.';
