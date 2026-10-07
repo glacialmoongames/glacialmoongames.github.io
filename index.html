@@ -210,29 +210,28 @@
             margin:72px auto 0;
         }
 
-        .gallery-preview{
-            display:block;
-            color:#e6e6e6;
-        }
-
         .gallery-strip{
-            display:grid;
-            grid-template-columns:0.85fr 1.4fr 1fr;
+            display:flex;
+            align-items:stretch;
             gap:8px;
             height:clamp(150px, 22vw, 250px);
-            overflow:hidden;
+            overflow-x:auto;
+            overflow-y:hidden;
+            padding-bottom:10px;
+            scroll-behavior:smooth;
+            scroll-snap-type:x proximity;
+            scrollbar-width:thin;
+            scrollbar-color:#555 transparent;
         }
 
         .gallery-strip img{
+            flex:0 0 auto;
             display:block;
-            width:100%;
+            width:auto;
+            max-width:none;
             height:100%;
-            object-fit:cover;
-            transition:opacity 0.2s;
-        }
-
-        .gallery-strip img:first-child{
-            object-position:center 42%;
+            object-fit:contain;
+            scroll-snap-align:start;
         }
 
         .gallery-link{
@@ -245,16 +244,9 @@
             letter-spacing:0.02em;
         }
 
-        .gallery-preview:hover{
-            opacity:1;
-        }
-
-        .gallery-preview:hover .gallery-strip img{
-            opacity:0.86;
-        }
-
-        .gallery-preview:hover .gallery-link{
+        .gallery-link:hover{
             border-color:#fff;
+            opacity:1;
         }
 
         .about{
@@ -494,14 +486,34 @@
     </section>
 
     <section class="gallery-callout" aria-label="Gallery">
-        <a class="gallery-preview" href="gallery.html">
-            <span class="gallery-strip" aria-hidden="true">
-                <img src="gallery/ellis-house/ellis-house-print.webp" alt="" loading="lazy" decoding="async">
-                <img src="gallery/insectorama/banner.webp" alt="" loading="lazy" decoding="async">
-                <img src="gallery/tori/psp-wallpaper.webp" alt="" loading="lazy" decoding="async">
-            </span>
-            <span class="gallery-link">View gallery</span>
-        </a>
+        <div class="gallery-strip" tabindex="0" aria-label="Gallery artwork carousel">
+            <img src="gallery/ellis-house/ellis-house-print.webp" alt="" loading="lazy" decoding="async">
+            <img src="gallery/ellis-house/ellis-house-game-boy.webp" alt="" loading="lazy" decoding="async">
+            <img src="gallery/ellis-house/elli-canon.webp" alt="" loading="lazy" decoding="async">
+            <img src="gallery/ellis-house/ellis-house-advance.webp" alt="" loading="lazy" decoding="async">
+            <img src="gallery/ellis-house/ellis-house-psp.webp" alt="" loading="lazy" decoding="async">
+            <img src="gallery/ellis-house/ellis-house-mini.webp" alt="" loading="lazy" decoding="async">
+            <img src="gallery/insectorama/banner.webp" alt="" loading="lazy" decoding="async">
+            <img src="gallery/insectorama/menus-concept.webp" alt="" loading="lazy" decoding="async">
+            <img src="gallery/insectorama/tatu-jewel.webp" alt="" loading="lazy" decoding="async">
+            <img src="gallery/insectorama/tatu-tattoo.webp" alt="" loading="lazy" decoding="async">
+            <img src="gallery/insectorama/tatu-concept.webp" alt="" loading="lazy" decoding="async">
+            <img src="gallery/insectorama/tatus.webp" alt="" loading="lazy" decoding="async">
+            <img src="gallery/tori/sisters.webp" alt="" loading="lazy" decoding="async">
+            <img src="gallery/tori/psp-wallpaper.webp" alt="" loading="lazy" decoding="async">
+            <img src="gallery/tori/sketches.webp" alt="" loading="lazy" decoding="async">
+            <img src="gallery/tori/tori-concept.webp" alt="" loading="lazy" decoding="async">
+            <img src="gallery/tori/tori-and-elli.webp" alt="" loading="lazy" decoding="async">
+            <img src="gallery/tori/tori-and-nico.webp" alt="" loading="lazy" decoding="async">
+            <img src="gallery/tori/tori-final.webp" alt="" loading="lazy" decoding="async">
+            <img src="gallery/tori/tori-marcy.webp" alt="" loading="lazy" decoding="async">
+            <img src="gallery/tori/scary-tori.webp" alt="" loading="lazy" decoding="async">
+            <img src="gallery/misc/card-game-field.webp" alt="" loading="lazy" decoding="async">
+            <img src="gallery/misc/glacial-moon-mug.webp" alt="" loading="lazy" decoding="async">
+            <img src="gallery/misc/monkeys.webp" alt="" loading="lazy" decoding="async">
+            <img src="gallery/misc/social-art.webp" alt="" loading="lazy" decoding="async">
+        </div>
+        <a class="gallery-link" href="gallery.html">View gallery</a>
     </section>
 
     <footer>
@@ -533,6 +545,7 @@
     document.querySelector('a[href="ellishouse/"] .game p').textContent="Plataformer feito para uma Game Jam";
     document.querySelector(".secondary-games > h2").textContent="Jogos menores";
     document.querySelector(".gallery-link").textContent="Ver galeria";
+    document.querySelector(".gallery-strip").setAttribute("aria-label","Carrossel de artes da galeria");
     document.getElementById("about-title").textContent="Sobre mim";
     document.getElementById("about-text").innerHTML='Olá, me chamo Daniel Giovanni, sou o game designer e <a class="artist-link" href="https://www.artstation.com/anniezin" target="_blank" rel="noopener noreferrer">artista</a> por trás da Glacial Moon Games, sou apaixonado por jogos desde a infância, tanto os digitais como analógicos. Com os projetos que faço quero transmitir essa paixão que tenho a mídia.';
     document.getElementById("about-project").innerHTML='Agora estou lançando meu maior projeto até então, <a class="insectorama-link" href="https://play.google.com/store/apps/details?id=com.glacialmoongames.insectorama" target="_blank" rel="noopener noreferrer">Insectorama</a>, um jogo estilo arcade para Android. Passei anos desenvolvendo esse jogo, fazendo artes e código a mão, com a ajuda de grandes artistas e programadores pelo caminho.';
