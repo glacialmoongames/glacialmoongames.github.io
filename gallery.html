@@ -39,13 +39,13 @@
         }
 
         header{
-            padding:52px 24px 34px;
+            padding:30px 24px 18px;
             text-align:center;
         }
 
         .logo{
-            width:min(330px, 75vw);
-            margin-bottom:24px;
+            width:min(230px, 62vw);
+            margin-bottom:14px;
         }
 
         h1{
@@ -56,19 +56,40 @@
 
         .intro{
             max-width:590px;
-            margin:16px auto 0;
+            margin:10px auto 0;
             color:#b8b8b8;
             line-height:1.6;
+        }
+
+        .category-nav{
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            flex-wrap:wrap;
+            gap:8px;
+            margin:19px auto 0;
+            color:#666;
+            font-size:14px;
+        }
+
+        .category-nav a{
+            color:#aaa;
+        }
+
+        .category-nav a:hover{
+            color:#fff;
+            opacity:1;
         }
 
         main{
             width:min(1240px, 100%);
             margin:0 auto;
-            padding:14px 24px 40px;
+            padding:2px 24px 40px;
         }
 
         .gallery-category{
-            margin-top:50px;
+            margin-top:42px;
+            scroll-margin-top:20px;
         }
 
         .category-heading{
@@ -206,6 +227,16 @@
             height:auto;
             max-height:none;
             margin:auto;
+            cursor:zoom-out;
+        }
+
+        .lightbox-image.is-fitted{
+            width:100%;
+            height:100%;
+            max-width:100%;
+            max-height:100%;
+            object-fit:contain;
+            cursor:zoom-in;
         }
 
         .lightbox-nav{
@@ -225,11 +256,11 @@
 
         @media (max-width:600px){
             header{
-                padding:76px 20px 24px;
+                padding:28px 20px 16px;
             }
 
             .logo{
-                width:220px;
+                width:180px;
             }
 
             main{
@@ -237,7 +268,7 @@
             }
 
             .gallery-category{
-                margin-top:38px;
+                margin-top:32px;
             }
 
             .carousel{
@@ -275,6 +306,12 @@
         <a href="index.html"><img src="logo.png" class="logo" alt="Glacial Moon Games"></a>
         <h1>Gallery</h1>
         <p class="intro">Concept art, sketches and artwork from our games.</p>
+        <nav class="category-nav" aria-label="Gallery categories">
+            <a href="#ellis-house-title">Elli's House</a><span aria-hidden="true">/</span>
+            <a href="#insectorama-title">Insectorama</a><span aria-hidden="true">/</span>
+            <a href="#tori-title">Tori</a><span aria-hidden="true">/</span>
+            <a href="#misc-title">Misc</a>
+        </nav>
     </header>
 
     <main>
@@ -363,7 +400,7 @@
                 <button class="close-button" type="button" aria-label="Close full-size image">×</button>
             </div>
             <div class="lightbox-stage">
-                <img class="lightbox-image" src="" alt="">
+                <img class="lightbox-image is-fitted" src="" alt="" role="button" tabindex="0" aria-label="Toggle original image size">
             </div>
         </div>
     </dialog>
@@ -378,6 +415,9 @@
             document.querySelector('h1').textContent = 'Galeria';
             document.querySelector('.intro').textContent = 'Artes conceituais, rascunhos e ilustrações dos nossos jogos.';
             document.querySelector('#misc-title').textContent = 'Diversos';
+            document.querySelector('.category-nav').setAttribute('aria-label', 'Categorias da galeria');
+            document.querySelector('.category-nav a:last-child').textContent = 'Diversos';
+            document.querySelector('.lightbox-image').setAttribute('aria-label', 'Alternar tamanho original da imagem');
         }
 
         const items = [...document.querySelectorAll('.gallery-item')];
@@ -405,7 +445,13 @@
 
             lightboxImage.src = source;
             lightboxImage.alt = item.querySelector('img').alt;
+            lightboxImage.classList.add('is-fitted');
             lightboxTitle.textContent = title;
+            lightboxStage.scrollTo({ top: 0, left: 0 });
+        }
+
+        function toggleImageSize() {
+            lightboxImage.classList.toggle('is-fitted');
             lightboxStage.scrollTo({ top: 0, left: 0 });
         }
 
@@ -417,6 +463,13 @@
         });
 
         lightbox.querySelector('.close-button').addEventListener('click', () => lightbox.close());
+        lightboxImage.addEventListener('click', toggleImageSize);
+        lightboxImage.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                toggleImageSize();
+            }
+        });
         lightbox.addEventListener('click', (event) => {
             if (event.target === lightbox) lightbox.close();
         });
