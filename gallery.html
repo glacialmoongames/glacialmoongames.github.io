@@ -61,26 +61,6 @@
             line-height:1.6;
         }
 
-        .category-nav{
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            flex-wrap:wrap;
-            gap:8px;
-            margin:19px auto 0;
-            color:#666;
-            font-size:14px;
-        }
-
-        .category-nav a{
-            color:#aaa;
-        }
-
-        .category-nav a:hover{
-            color:#fff;
-            opacity:1;
-        }
-
         main{
             width:min(1240px, 100%);
             margin:0 auto;
@@ -306,12 +286,6 @@
         <a href="index.html"><img src="logo.png" class="logo" alt="Glacial Moon Games"></a>
         <h1>Gallery</h1>
         <p class="intro">Concept art, sketches and artwork from our games.</p>
-        <nav class="category-nav" aria-label="Gallery categories">
-            <a href="#ellis-house-title">Elli's House</a><span aria-hidden="true">/</span>
-            <a href="#insectorama-title">Insectorama</a><span aria-hidden="true">/</span>
-            <a href="#tori-title">Tori</a><span aria-hidden="true">/</span>
-            <a href="#misc-title">Misc</a>
-        </nav>
     </header>
 
     <main>
@@ -415,8 +389,6 @@
             document.querySelector('h1').textContent = 'Galeria';
             document.querySelector('.intro').textContent = 'Artes conceituais, rascunhos e ilustrações dos nossos jogos.';
             document.querySelector('#misc-title').textContent = 'Diversos';
-            document.querySelector('.category-nav').setAttribute('aria-label', 'Categorias da galeria');
-            document.querySelector('.category-nav a:last-child').textContent = 'Diversos';
             document.querySelector('.lightbox-image').setAttribute('aria-label', 'Alternar tamanho original da imagem');
         }
 
