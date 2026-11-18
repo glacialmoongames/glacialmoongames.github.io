@@ -57,7 +57,7 @@
     const saved=Array.isArray(data?.elements)?data.elements:[];
     const space=saved.find(item=>item.type==='__canvas_space');
     const extraSpace=Number.isFinite(space?.height)?Math.max(0,space.height):0;
-    const updateStageHeight=()=>{stage.style.height=(stage.clientWidth*2/3+extraSpace)+'px'};
+    const updateStageHeight=()=>{stage.style.height=(stage.clientWidth*2/3+extraSpace*(stage.clientWidth/1160))+'px'};
     new ResizeObserver(updateStageHeight).observe(stage);
     updateStageHeight();
     for(const item of saved){
