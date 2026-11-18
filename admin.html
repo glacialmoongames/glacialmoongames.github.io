@@ -15,6 +15,9 @@
     .logo{display:block;width:170px;max-width:48vw;height:auto}
     h1{margin:0;font-size:28px;font-weight:700;white-space:nowrap}
     main{width:min(1160px,calc(100% - 40px));margin:0 auto 48px}
+    .canvas-tabs{display:flex;justify-content:center;gap:8px;margin:0 auto 16px}
+    .canvas-tabs button{min-width:112px;letter-spacing:.08em}
+    .canvas-tabs button.active{border-color:var(--accent);color:var(--accent)}
     .toolbar,.login-row{display:none;align-items:center;justify-content:center;flex-wrap:wrap;gap:7px;margin:0 auto 14px}
     .toolbar.visible,.login-row.visible{display:flex}
     button,.button{appearance:none;border:1px solid var(--line);border-radius:8px;background:#303030;color:var(--ink);padding:8px 11px;font:inherit;font-size:13px;cursor:pointer;transition:background .12s,border-color .12s}
@@ -44,12 +47,16 @@
     .lightbox{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(0,0,0,.92);cursor:zoom-out}
     .lightbox[hidden]{display:none}.lightbox img{display:block;max-width:min(96vw,1800px);max-height:94vh;width:auto;height:auto;object-fit:contain;border-radius:7px;cursor:default}
     #hint{color:#777;font-size:12px;margin:8px auto 0}
-    @media(max-width:700px){header{padding:27px 14px 22px}.masthead{gap:12px}.logo{width:110px}h1{font-size:24px}main{width:calc(100% - 28px)}.toolbar,.login-row{gap:6px;margin-bottom:12px}button,.button{padding:8px 9px;font-size:12px}input[type=email]{width:min(250px,60vw)}}
+    @media(max-width:700px){header{padding:27px 14px 22px}.masthead{gap:12px}.logo{width:110px}h1{font-size:24px}main{width:calc(100% - 28px)}.toolbar,.login-row{gap:6px;margin-bottom:12px}button,.button{padding:8px 9px;font-size:12px}.canvas-tabs button{min-width:98px}input[type=email]{width:min(250px,60vw)}}
   </style>
 </head>
 <body>
   <header><div class="masthead"><img class="logo" src="logo.png" alt="Glacial Moon Games"><h1>Portfólio</h1></div></header>
   <main>
+    <nav id="canvas-tabs" class="canvas-tabs" aria-label="Portfólios">
+      <button type="button" class="canvas-tab active" data-canvas-id="1" aria-pressed="true">ESTILOS</button>
+      <button type="button" class="canvas-tab" data-canvas-id="2" aria-pressed="false">OC's</button>
+    </nav>
     <div id="login" class="login-row">
       <input id="email" type="email" autocomplete="email" placeholder="E-mail de administrador" aria-label="E-mail">
       <button id="signin" class="primary">Entrar</button>
@@ -76,7 +83,7 @@
     const stage=$('#composition'),status=$('#status'),toolbar=$('#toolbar'),login=$('#login');
     const selectionBox=document.createElement('div');selectionBox.className='selection-box';selectionBox.hidden=true;
     const lightbox=$('#lightbox'),lightboxImage=$('#lightbox-image');
-    let elements=[],selectedIds=new Set(),nodes=new Map(),user=null,dirty=false,extraSpace=0,copiedTextBoxes=[];
+    let elements=[],selectedIds=new Set(),nodes=new Map(),user=null,dirty=false,extraSpace=0,copiedTextBoxes=[],canvasId=1;
     let overlapCycle={x:NaN,y:NaN,index:0,ids:[]};
     const say=message=>{status.textContent=message};
     const clamp=(value,min,max)=>Math.max(min,Math.min(max,value));
@@ -355,15 +362,30 @@
       syncButtons();
       if(!owner&&!elements.length)say('');
     }
+    function updateCanvasTabs(){
+      for(const button of document.querySelectorAll('.canvas-tab')){
+        const active=Number(button.dataset.canvasId)===canvasId;
+        button.classList.toggle('active',active);button.setAttribute('aria-pressed',String(active));
+      }
+    }
     async function load(){
-      const {data,error}=await client.from('studio_canvas').select('elements').eq('id',1).maybeSingle();
+      const {data,error}=await client.from('studio_canvas').select('elements').eq('id',canvasId).maybeSingle();
+      elements=[];extraSpace=0;selectedIds.clear();
       if(!error&&Array.isArray(data?.elements)){
         const space=data.elements.find(item=>item.type==='__canvas_space');
         extraSpace=Number.isFinite(space?.height)?Math.max(0,space.height):0;
         elements=data.elements.filter(item=>item.type!=='__canvas_space');
       }
-      render();
-      if(error)say('Não foi possível carregar o portfólio.');
+      dirty=false;render();syncButtons();
+      if(error)say('Não foi possível carregar este portfólio.');else say('');
+    }
+    async function switchCanvas(nextId){
+      if(nextId===canvasId)return;
+      if(dirty){say('Salve as alterações antes de trocar de portfólio.');return}
+      canvasId=nextId;updateCanvasTabs();say('Carregando…');await load();
+    }
+    for(const button of document.querySelectorAll('.canvas-tab')){
+      button.addEventListener('click',()=>switchCanvas(Number(button.dataset.canvasId)));
     }
     $('#signin').addEventListener('click',async()=>{
       const email=$('#email').value.trim().toLowerCase();
@@ -557,7 +579,7 @@
     $('#save').addEventListener('click',async()=>{
       if(!user||!dirty)return;
       say('Salvando…');
-      const {error}=await client.from('studio_canvas').upsert({id:1,elements:[...elements,{id:'__canvas_space',type:'__canvas_space',height:extraSpace,z:0}],updated_at:new Date().toISOString()});
+      const {error}=await client.from('studio_canvas').upsert({id:canvasId,elements:[...elements,{id:'__canvas_space',type:'__canvas_space',height:extraSpace,z:0}],updated_at:new Date().toISOString()});
       if(error){say(error.message);return}
       dirty=false;syncButtons();say('Portfólio salvo.');
     });
