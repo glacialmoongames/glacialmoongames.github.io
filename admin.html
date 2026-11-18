@@ -555,11 +555,15 @@
     });
     $('#signout').addEventListener('click',async()=>{await client.auth.signOut();say('Sessão encerrada.')});
     document.addEventListener('pointerdown',event=>{
+      const active=document.activeElement;
+      if(active?.matches('.text-content[contenteditable="true"]')&&!active.contains(event.target))active.blur();
       if(!user||!selectedIds.size||stage.contains(event.target)||toolbar.contains(event.target)||login.contains(event.target))return;
       selectedIds.clear();syncSelection();
     });
     stage.addEventListener('pointerdown',event=>{
       if(event.target!==stage||!user)return;
+      const active=document.activeElement;
+      if(active?.matches('.text-content[contenteditable="true"]'))active.blur();
       event.preventDefault();
       const startX=event.clientX,startY=event.clientY;
       const stageRect=stage.getBoundingClientRect();
