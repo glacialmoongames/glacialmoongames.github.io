@@ -34,6 +34,7 @@
     #composition{position:relative;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-content:start;column-gap:16px;row-gap:28px;width:100%;height:auto!important;min-height:calc(var(--canvas-min-height,0px) + var(--canvas-extra-space,0px));padding-bottom:var(--canvas-extra-space,0px);aspect-ratio:auto;touch-action:none;container-type:inline-size}
     #composition.icons-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
     #composition.single-column{grid-template-columns:1fr}
+    #composition.characters-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
     #composition.single-column .piece:not(.text){aspect-ratio:auto;display:block}
     #composition.single-column .piece:not(.text) img{height:auto}
     #composition.editor-grid{background-image:radial-gradient(circle,rgba(230,230,230,.2) 1px,transparent 1.4px);background-size:16px 16px;background-position:0 0}
@@ -429,6 +430,7 @@
     function updateCanvasTabs(){
       stage.classList.toggle('icons-grid',canvasId===1);
       stage.classList.toggle('single-column',canvasId===4||canvasId===5);
+      stage.classList.toggle('characters-grid',canvasId===2);
       for(const button of document.querySelectorAll('.canvas-tab')){
         const active=Number(button.dataset.canvasId)===canvasId;
         button.classList.toggle('active',active);button.setAttribute('aria-pressed',String(active));
