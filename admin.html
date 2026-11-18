@@ -16,8 +16,10 @@
     h1{margin:0;font-size:28px;font-weight:700;white-space:nowrap}
     main{width:min(1160px,calc(100% - 40px));margin:0 auto 48px}
     .canvas-tabs{position:sticky;top:8px;z-index:900;display:flex;justify-content:center;gap:8px;margin:0 auto 16px;padding:8px 0;background:linear-gradient(var(--bg) 78%,rgba(35,35,35,0));}
-    .canvas-tabs button{min-width:112px;letter-spacing:.08em}
-    .canvas-tabs button.active{border-color:var(--accent);color:var(--accent)}
+    .canvas-tabs button{min-width:0;padding:8px 16px;border:0;border-radius:0;background:transparent;color:var(--muted);letter-spacing:.08em}
+    .canvas-tabs button:hover{border-color:transparent;background:transparent;color:var(--ink)}
+    .canvas-tabs button+button{border-left:1px solid #666}
+    .canvas-tabs button.active{color:var(--accent);font-weight:700}
     .toolbar,.login-row{display:none;align-items:center;justify-content:center;flex-wrap:wrap;gap:7px;margin:0 auto 14px}
     .toolbar.visible,.login-row.visible{display:flex}
     button,.button{appearance:none;border:1px solid var(--line);border-radius:8px;background:#303030;color:var(--ink);padding:8px 11px;font:inherit;font-size:13px;cursor:pointer;transition:background .12s,border-color .12s}
@@ -38,7 +40,7 @@
     .text-content{display:block;width:100%;min-height:1em;white-space:pre-wrap;user-select:text}
     .text-content[contenteditable=true]{outline:1px dashed var(--accent);outline-offset:3px;cursor:text}
     .piece.selected{outline:1px dashed var(--accent);outline-offset:4px}
-    .selection-box{position:absolute;z-index:1000;border:1px solid var(--accent);background:rgba(244,123,32,.14);pointer-events:none}
+    .selection-box{position:absolute;z-index:1000;border:0;background:rgba(244,123,32,.12);pointer-events:none}
     .selection-box[hidden]{display:none}
     .resize-handle{display:none;position:absolute;width:14px;height:14px;right:-7px;bottom:-7px;border:2px solid var(--bg);border-radius:50%;background:var(--accent);cursor:nwse-resize;touch-action:none}
     .piece.selected .resize-handle{display:block}
@@ -47,7 +49,7 @@
     .lightbox{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(0,0,0,.92);cursor:zoom-out}
     .lightbox[hidden]{display:none}.lightbox img{display:block;max-width:min(96vw,1800px);max-height:94vh;width:auto;height:auto;object-fit:contain;border-radius:7px;cursor:default}
     #hint{color:#777;font-size:12px;margin:8px auto 0}
-    @media(max-width:700px){header{padding:27px 14px 22px}.masthead{gap:12px}.logo{width:110px}h1{font-size:24px}main{width:calc(100% - 28px)}.toolbar,.login-row{gap:6px;margin-bottom:12px}button,.button{padding:8px 9px;font-size:12px}.canvas-tabs button{min-width:98px}input[type=email]{width:min(250px,60vw)}}
+    @media(max-width:700px){header{padding:27px 14px 22px}.masthead{gap:12px}.logo{width:110px}h1{font-size:24px}main{width:calc(100% - 28px)}.toolbar,.login-row{gap:6px;margin-bottom:12px}button,.button{padding:8px 9px;font-size:12px}.canvas-tabs button{padding:8px 12px}input[type=email]{width:min(250px,60vw)}}
   </style>
 </head>
 <body>
@@ -55,7 +57,7 @@
   <main>
     <nav id="canvas-tabs" class="canvas-tabs" aria-label="Portfólios">
       <button type="button" class="canvas-tab active" data-canvas-id="1" aria-pressed="true">ESTILOS</button>
-      <button type="button" class="canvas-tab" data-canvas-id="2" aria-pressed="false">OC's</button>
+      <button type="button" class="canvas-tab" data-canvas-id="2" aria-pressed="false">PERSONAGENS</button>
     </nav>
     <div id="login" class="login-row">
       <input id="email" type="email" autocomplete="email" placeholder="E-mail de administrador" aria-label="E-mail">
