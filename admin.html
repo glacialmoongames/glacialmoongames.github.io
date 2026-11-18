@@ -31,7 +31,8 @@
     input[type=file]{display:none}
     #status{min-height:18px;color:var(--muted);font-size:12px;margin:0 0 10px}
     .login-row{margin-bottom:8px}
-    #composition{position:relative;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-content:start;column-gap:16px;row-gap:20px;width:100%;height:auto!important;min-height:calc(var(--canvas-min-height,0px) + var(--canvas-extra-space,0px));padding-bottom:var(--canvas-extra-space,0px);aspect-ratio:auto;touch-action:none;container-type:inline-size}
+    #composition{position:relative;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-content:start;column-gap:16px;row-gap:28px;width:100%;height:auto!important;min-height:calc(var(--canvas-min-height,0px) + var(--canvas-extra-space,0px));padding-bottom:var(--canvas-extra-space,0px);aspect-ratio:auto;touch-action:none;container-type:inline-size}
+    #composition.icons-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
     #composition.editor-grid{background-image:radial-gradient(circle,rgba(230,230,230,.2) 1px,transparent 1.4px);background-size:16px 16px;background-position:0 0}
     #composition.drop-active::after{content:'Solte para adicionar';position:absolute;inset:0;z-index:100;display:grid;place-items:center;border:1px dashed var(--accent);border-radius:10px;background:rgba(35,35,35,.88);color:var(--ink);font-size:clamp(18px,3vw,28px);pointer-events:none}
     .piece{position:absolute;left:var(--x);top:var(--y);width:var(--w);z-index:var(--z);transform:translate(-50%,-50%);user-select:none}
@@ -40,7 +41,8 @@
     #composition .piece:not(.text) img{width:100%;height:100%;object-fit:contain}
     #composition .piece.dragging{opacity:.4}
     #composition .piece.drop-target{outline:2px solid var(--accent);outline-offset:3px}
-    #composition .piece.text{position:absolute;left:var(--x);top:var(--y);width:var(--w);transform:translate(-50%,-50%)}
+    #composition .piece.text{position:relative;left:auto;top:auto;width:var(--w);transform:none;grid-column:1/-1;justify-self:start;cursor:grab}
+    #composition .piece.text:active{cursor:grabbing}
     .piece img{display:block;width:100%;height:auto;border-radius:7px;pointer-events:none;user-select:none}
     .piece.text{color:#e6e6e6;font-family:Arial,Helvetica,sans-serif;font-size:clamp(12px,calc(var(--font-scale,2.1)*1cqw),100px);line-height:1.25;white-space:pre-wrap;overflow-wrap:anywhere}
     .text-content{display:block;width:100%;min-height:1em;white-space:pre-wrap;user-select:text}
@@ -79,7 +81,7 @@
       <button id="save" class="primary" disabled>Salvar</button><button id="signout">Sair</button>
     </nav>
     <div id="status" role="status" aria-live="polite"></div>
-    <section id="composition" aria-label="Prévia do portfólio"></section>
+    <section id="composition" class="icons-grid" aria-label="Prévia do portfólio"></section>
     <p id="hint">Entre para editar. Arraste elementos; Shift+clique seleciona vários. Arraste a alça para redimensionar e use “Ver imagem” para abrir uma imagem inteira.</p>
   </main>
   <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Imagem em tamanho cheio" hidden><img id="lightbox-image" alt="" draggable="true"></div>
@@ -219,7 +221,7 @@
       }
       if(!selectedIds.has(item.id))return;
       event.preventDefault();syncSelection();
-      if(item.type==='image'){startImageReorder(event,item,node);return}
+      if(item.type==='image'||item.type==='text'){startGridReorder(event,item,node);return}
       const moving=elements.filter(entry=>selectedIds.has(entry.id));
       const startX=event.clientX,startY=event.clientY,rect=stage.getBoundingClientRect();
       const startPositions=moving.map(entry=>{
@@ -263,7 +265,7 @@
       window.addEventListener('pointerup',finish,{once:true});
       window.addEventListener('pointercancel',finish,{once:true});
     }
-    function startImageReorder(event,item,node){
+    function startGridReorder(event,item,node){
       const startX=event.clientX,startY=event.clientY;
       let dragging=false,targetItem=null;
       const clearTargets=()=>{for(const candidate of elements)nodes.get(candidate.id)?.classList.remove('drop-target')};
@@ -271,7 +273,7 @@
         if(!dragging&&Math.hypot(nextEvent.clientX-startX,nextEvent.clientY-startY)<6)return;
         dragging=true;node.classList.add('dragging');
         clearTargets();targetItem=elements.find(candidate=>{
-          if(candidate.id===item.id||candidate.type!=='image')return false;
+          if(candidate.id===item.id||!['image','text'].includes(candidate.type))return false;
           const bounds=nodes.get(candidate.id)?.getBoundingClientRect();
           return bounds&&nextEvent.clientX>=bounds.left&&nextEvent.clientX<=bounds.right&&nextEvent.clientY>=bounds.top&&nextEvent.clientY<=bounds.bottom;
         })||null;
@@ -422,6 +424,7 @@
       if(!owner&&!elements.length)say('');
     }
     function updateCanvasTabs(){
+      stage.classList.toggle('icons-grid',canvasId===1);
       for(const button of document.querySelectorAll('.canvas-tab')){
         const active=Number(button.dataset.canvasId)===canvasId;
         button.classList.toggle('active',active);button.setAttribute('aria-pressed',String(active));
@@ -589,12 +592,10 @@
       if(!user)return;
       const text=prompt('Texto para o portfólio:','Seu texto');
       if(text===null||!text.trim())return;
-      const item={id:crypto.randomUUID(),type:'text',text:text.trim(),x:50,y:0,w:34,fontScale:2.1,fontSize:32,z:highestLayer()+1};
-      elements.push(item);selectedIds=new Set([item.id]);
-      const node=createPiece(item);stage.append(node);
-      item.y=node.getBoundingClientRect().height/2/stage.getBoundingClientRect().height*100;
-      stylePiece(node,item);
-      setDirty('Texto adicionado. Salve para publicar.');syncSelection();
+      const item={id:crypto.randomUUID(),type:'text',text:text.trim(),x:50,y:0,w:34,fontScale:2.1,fontSize:32,z:highestLayer()+1,gridOrder:0};
+      elements.unshift(item);elements.forEach((entry,index)=>{entry.gridOrder=index});
+      selectedIds=new Set([item.id]);render();
+      setDirty('Texto adicionado no topo. Arraste para ajustar sua linha; salve para publicar.');
     });
     $('#edit-text').addEventListener('click',()=>{
       const item=elements.find(entry=>selectedIds.has(entry.id));
@@ -618,12 +619,11 @@
         copiedTextBoxes=selected.map(item=>({...item}));event.preventDefault();say(selected.length+' caixa(s) de texto copiada(s).');
       }else if(key==='v'&&copiedTextBoxes.length){
         event.preventDefault();
-        const rect=stage.getBoundingClientRect(),offsetX=16/rect.width*100,offsetY=16/rect.height*100;
-        let z=Math.max(0,...elements.map(item=>item.z));
-        const copies=copiedTextBoxes.map(item=>({...item,id:crypto.randomUUID(),x:clamp(item.x+offsetX,0,100),y:clamp(item.y+offsetY,0,100),z:++z}));
-        elements.push(...copies);selectedIds=new Set(copies.map(item=>item.id));
-        for(const item of copies)stage.insertBefore(createPiece(item),selectionBox);
-        setDirty(copies.length+' caixa(s) de texto colada(s). Salve para publicar.');syncSelection();
+        let z=Math.max(0,...elements.map(item=>Number(item.z)||0)),nextOrder=Math.max(-1,...elements.map((item,index)=>Number.isFinite(item.gridOrder)?item.gridOrder:index));
+        const copies=copiedTextBoxes.map(item=>({...item,id:crypto.randomUUID(),z:++z,gridOrder:++nextOrder}));
+        elements.push(...copies);elements.forEach((item,index)=>{if(!Number.isFinite(item.gridOrder))item.gridOrder=index});
+        selectedIds=new Set(copies.map(item=>item.id));render();
+        setDirty(copies.length+' caixa(s) de texto colada(s). Salve para publicar.');
       }
     });
     window.addEventListener('keydown',event=>{
