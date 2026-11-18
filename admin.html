@@ -535,8 +535,12 @@
       if(!user)return;
       const text=prompt('Texto para o portfólio:','Seu texto');
       if(text===null||!text.trim())return;
-      const item={id:crypto.randomUUID(),type:'text',text:text.trim(),x:50,y:50,w:34,fontScale:2.1,fontSize:32,z:highestLayer()+1};
-      elements.push(item);selectedIds=new Set([item.id]);stage.append(createPiece(item));setDirty('Texto adicionado. Salve para publicar.');syncSelection();
+      const item={id:crypto.randomUUID(),type:'text',text:text.trim(),x:50,y:0,w:34,fontScale:2.1,fontSize:32,z:highestLayer()+1};
+      elements.push(item);selectedIds=new Set([item.id]);
+      const node=createPiece(item);stage.append(node);
+      item.y=node.getBoundingClientRect().height/2/stage.getBoundingClientRect().height*100;
+      stylePiece(node,item);
+      setDirty('Texto adicionado. Salve para publicar.');syncSelection();
     });
     $('#edit-text').addEventListener('click',()=>{
       const item=elements.find(entry=>selectedIds.has(entry.id));
