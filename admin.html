@@ -219,7 +219,10 @@
           const targetGroupWidth=snap(groupWidth+dx,Math.max(24,groupWidth*.1),Math.max(24,groupWidth*4),freeMove);
           const factor=targetGroupWidth/groupWidth;
           for(const target of targets){
-            const size=clamp(startSizes.get(target.id)*factor,5,100);
+            const minWidth=rect.width*.05,maxWidth=rect.width;
+            const scaledPixels=startSizes.get(target.id)*rect.width/100*factor;
+            const snappedPixels=snap(scaledPixels,minWidth,maxWidth,freeMove);
+            const size=snappedPixels/rect.width*100;
             nextSizes.set(target.id,size);nodes.get(target.id)?.style.setProperty('--w',size+'%');
           }
         }else{
