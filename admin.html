@@ -162,7 +162,7 @@
       const range=document.createRange();range.selectNodeContents(content);range.collapse(false);
       const selection=window.getSelection();selection.removeAllRanges();selection.addRange(range);
     }
-    function updateStageHeight(){stage.style.height=(stage.clientWidth*2/3+extraSpace)+'px'}
+    function updateStageHeight(){stage.style.height=(stage.clientWidth*2/3+extraSpace*(stage.clientWidth/1160))+'px'}
     new ResizeObserver(updateStageHeight).observe(stage);
     function render(){
       nodes.clear();stage.replaceChildren();updateStageHeight();
