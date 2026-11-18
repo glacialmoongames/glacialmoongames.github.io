@@ -166,18 +166,22 @@
       event.preventDefault();syncSelection();
       const moving=elements.filter(entry=>selectedIds.has(entry.id));
       const startX=event.clientX,startY=event.clientY,rect=stage.getBoundingClientRect();
-      const startPositions=moving.map(entry=>({item:entry,node:nodes.get(entry.id),x:entry.x,y:entry.y}));
+      const startPositions=moving.map(entry=>{
+        const bounds=nodes.get(entry.id)?.getBoundingClientRect();
+        return {item:entry,node:nodes.get(entry.id),x:entry.x,y:entry.y,width:bounds?.width||0,height:bounds?.height||0};
+      });
       const gridSize=24,finalPositions=new Map();
       let raf=0,lastX=startX,lastY=startY,lastFreeMove=false;
       const draw=(clientX,clientY,freeMove=false)=>{
         const dx=clientX-startX,dy=clientY-startY;
         for(const entry of startPositions){
-          const rawX=entry.x/100*rect.width+dx,rawY=entry.y/100*rect.height+dy;
-          const pxX=freeMove?rawX:Math.round(rawX/gridSize)*gridSize;
-          const pxY=freeMove?rawY:Math.round(rawY/gridSize)*gridSize;
-          const x=clamp(pxX/rect.width*100,0,100),y=clamp(pxY/rect.height*100,0,100);
+          const rawLeft=entry.x/100*rect.width-entry.width/2+dx;
+          const rawTop=entry.y/100*rect.height-entry.height/2+dy;
+          const left=clamp(freeMove?rawLeft:Math.round(rawLeft/gridSize)*gridSize,0,Math.max(0,rect.width-entry.width));
+          const top=clamp(freeMove?rawTop:Math.round(rawTop/gridSize)*gridSize,0,Math.max(0,rect.height-entry.height));
+          const x=(left+entry.width/2)/rect.width*100,y=(top+entry.height/2)/rect.height*100;
           finalPositions.set(entry.item.id,{x,y});
-          if(entry.node)entry.node.style.transform='translate3d(calc(-50% + '+((x-entry.x)/100*rect.width)+'px),calc(-50% + '+((y-entry.y)/100*rect.height)+'px),0)';
+          if(entry.node)entry.node.style.transform='translate3d(calc(-50% + '+(x-entry.x)/100*rect.width+'px),calc(-50% + '+(y-entry.y)/100*rect.height+'px),0)';
         }
       };
       const move=nextEvent=>{
@@ -190,12 +194,14 @@
         window.removeEventListener('pointercancel',finish);
         if(raf){cancelAnimationFrame(raf);raf=0}
         draw(nextEvent.clientX,nextEvent.clientY,nextEvent.ctrlKey);
+        let changed=false;
         for(const entry of startPositions){
           const final=finalPositions.get(entry.item.id)||{x:entry.x,y:entry.y};
+          if(Math.abs(final.x-entry.x)>.001||Math.abs(final.y-entry.y)>.001)changed=true;
           entry.item.x=final.x;entry.item.y=final.y;
           if(entry.node)stylePiece(entry.node,entry.item);
         }
-        if(moved)setDirty('Posição atualizada. Salve para publicar.');
+        if(changed)setDirty('Posição atualizada. Salve para publicar.');
       };
       window.addEventListener('pointermove',move);
       window.addEventListener('pointerup',finish,{once:true});
@@ -205,35 +211,51 @@
       const startX=event.clientX,rect=stage.getBoundingClientRect(),isText=item.type==='text',gridSize=24;
       const targets=isText?[item]:elements.filter(entry=>selectedIds.has(entry.id)&&entry.type==='image');
       const resizingGroup=!isText&&targets.length>1;
-      const bounds=resizingGroup?targets.reduce((box,entry)=>{
-        const r=nodes.get(entry.id).getBoundingClientRect();
-        return {left:Math.min(box.left,r.left),right:Math.max(box.right,r.right)};
-      },{left:Infinity,right:-Infinity}):null;
-      const groupWidth=resizingGroup?Math.max(1,bounds.right-bounds.left):0;
-      const startSizes=new Map(targets.map(entry=>[entry.id,isText?(entry.fontScale||2.1):entry.w]));
-      let raf=0,lastX=startX,lastFreeMove=event.ctrlKey,nextSizes=new Map(startSizes);
-      const snap=(pixels,min,max,freeMove)=>clamp(freeMove?pixels:Math.round(pixels/gridSize)*gridSize,min,max);
+      const entries=targets.map(target=>{
+        const bounds=nodes.get(target.id).getBoundingClientRect();
+        return {
+          item:target,node:nodes.get(target.id),
+          width:bounds.width,height:bounds.height,
+          left:bounds.left-rect.left,top:bounds.top-rect.top,
+          startFont:target.fontScale||2.1,startWidth:target.w
+        };
+      });
+      const groupBounds=resizingGroup?entries.reduce((box,entry)=>({
+        left:Math.min(box.left,entry.left),right:Math.max(box.right,entry.left+entry.width)
+      }),{left:Infinity,right:-Infinity}):null;
+      const groupWidth=resizingGroup?Math.max(1,groupBounds.right-groupBounds.left):0;
+      let raf=0,lastX=startX,lastFreeMove=event.ctrlKey;
+      const nextValues=new Map();
+      const snap=(pixels,min,max,freeMove)=>{
+        if(freeMove)return clamp(pixels,min,max);
+        const low=Math.ceil(min/gridSize)*gridSize,high=Math.floor(max/gridSize)*gridSize;
+        return clamp(Math.round(pixels/gridSize)*gridSize,low,Math.max(low,high));
+      };
       const draw=(clientX,freeMove=false)=>{
         const dx=clientX-startX;
-        if(resizingGroup){
-          const targetGroupWidth=snap(groupWidth+dx,Math.max(24,groupWidth*.1),Math.max(24,groupWidth*4),freeMove);
-          const factor=targetGroupWidth/groupWidth;
-          for(const target of targets){
-            const minWidth=rect.width*.05,maxWidth=rect.width;
-            const scaledPixels=startSizes.get(target.id)*rect.width/100*factor;
-            const snappedPixels=snap(scaledPixels,minWidth,maxWidth,freeMove);
-            const size=snappedPixels/rect.width*100;
-            nextSizes.set(target.id,size);nodes.get(target.id)?.style.setProperty('--w',size+'%');
+        const groupFactor=resizingGroup
+          ?snap(groupWidth+dx,Math.max(gridSize,groupWidth*.1),Math.max(gridSize,groupWidth*4),freeMove)/groupWidth
+          :1;
+        for(const entry of entries){
+          if(isText){
+            const startPixels=entry.startFont*rect.width/100;
+            const sizePixels=snap(startPixels+dx,15,100,freeMove);
+            const fontScale=sizePixels*100/rect.width;
+            nextValues.set(entry.item.id,{fontScale});
+            entry.node.style.setProperty('--font-scale',fontScale);
+            continue;
           }
-        }else{
-          const startSize=startSizes.get(item.id);
-          const pixels=isText?startSize*rect.width/100:startSize*rect.width/100;
-          const min=isText?15:rect.width*.05,max=isText?100:rect.width;
-          const resized=snap(pixels+dx,min,max,freeMove);
-          const size=isText?resized/rect.width*100:resized/rect.width*100;
-          nextSizes.set(item.id,size);
-          if(isText)node.style.setProperty('--font-scale',size);
-          else node.style.setProperty('--w',size+'%');
+          const minWidth=rect.width*.05,maxWidth=rect.width;
+          const startWidthPixels=resizingGroup?entry.width*groupFactor:entry.width+dx;
+          const width=snap(startWidthPixels,minWidth,maxWidth,freeMove);
+          const height=entry.height*(width/entry.width);
+          const left=clamp(freeMove?entry.left:snap(entry.left,0,Math.max(0,rect.width-width),false),0,Math.max(0,rect.width-width));
+          const top=clamp(freeMove?entry.top:snap(entry.top,0,Math.max(0,rect.height-height),false),0,Math.max(0,rect.height-height));
+          const x=(left+width/2)/rect.width*100,y=(top+height/2)/rect.height*100,w=width/rect.width*100;
+          nextValues.set(entry.item.id,{x,y,w});
+          entry.node.style.setProperty('--x',x+'%');
+          entry.node.style.setProperty('--y',y+'%');
+          entry.node.style.setProperty('--w',w+'%');
         }
       };
       const move=nextEvent=>{
@@ -244,10 +266,17 @@
         window.removeEventListener('pointermove',move);window.removeEventListener('pointerup',finish);window.removeEventListener('pointercancel',finish);
         if(raf){cancelAnimationFrame(raf);raf=0}
         draw(nextEvent.clientX,nextEvent.ctrlKey);
-        for(const target of targets){
-          const size=nextSizes.get(target.id);
-          if(isText){target.fontScale=size;nodes.get(target.id)?.style.setProperty('--font-scale',target.fontScale)}
-          else{target.w=size;nodes.get(target.id)?.style.setProperty('--w',size+'%')}
+        for(const entry of entries){
+          const value=nextValues.get(entry.item.id);
+          if(!value)continue;
+          if(isText){entry.item.fontScale=value.fontScale;entry.node.style.setProperty('--font-scale',value.fontScale)}
+          else{
+            entry.item.x=value.x;entry.item.y=value.y;entry.item.w=value.w;
+            entry.node.style.transform='translate(-50%,-50%)';
+            entry.node.style.setProperty('--x',value.x+'%');
+            entry.node.style.setProperty('--y',value.y+'%');
+            entry.node.style.setProperty('--w',value.w+'%');
+          }
         }
         setDirty('Tamanho atualizado. Salve para publicar.');
       };
