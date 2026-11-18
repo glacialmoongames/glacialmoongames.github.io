@@ -12,7 +12,7 @@
     body{background:var(--bg);color:var(--ink);font:16px Arial,Helvetica,sans-serif;text-align:center}
     header{padding:34px 20px 26px}
     .masthead{display:flex;align-items:center;justify-content:center;gap:20px;width:max-content;max-width:100%;margin:0 auto}
-    .logo{display:block;width:170px;max-width:48vw;height:auto}
+    .logo-link{display:block;line-height:0}.logo{display:block;width:170px;max-width:48vw;height:auto}
     h1{margin:0;font-size:28px;font-weight:700;white-space:nowrap}
     main{width:min(1160px,calc(100% - 40px));margin:0 auto 48px}
     .canvas-tabs{position:sticky;top:8px;z-index:900;display:flex;justify-content:center;gap:0;flex-wrap:wrap;margin:0 auto 16px;padding:8px 0;background:linear-gradient(var(--bg) 78%,rgba(35,35,35,0));}
@@ -65,7 +65,7 @@
   </style>
 </head>
 <body>
-  <header><div class="masthead"><img class="logo" src="logo.png" alt="Glacial Moon Games"><h1>Portfólio</h1></div></header>
+  <header><div class="masthead"><a class="logo-link" href="index.html" aria-label="Glacial Moon Games — início"><img class="logo" src="logo.png" alt="Glacial Moon Games"></a><h1>Portfólio</h1></div></header>
   <main>
     <nav id="canvas-tabs" class="canvas-tabs" aria-label="Portfólios">
       <button type="button" class="canvas-tab active" data-canvas-id="1" data-tab-en="ICON'S/EMOTES" data-tab-pt="ICON'S/EMOTES" aria-pressed="true">ICON'S/EMOTES</button>
