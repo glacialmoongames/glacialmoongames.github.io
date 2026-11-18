@@ -27,6 +27,7 @@
     #status{min-height:18px;color:var(--muted);font-size:12px;margin:0 0 10px}
     .login-row{margin-bottom:8px}
     #composition{position:relative;width:100%;height:auto;aspect-ratio:auto;touch-action:none;container-type:inline-size}
+    #composition.editor-grid{background-image:radial-gradient(circle,rgba(230,230,230,.2) 1px,transparent 1.4px);background-size:24px 24px;background-position:0 0}
     #composition.drop-active::after{content:'Solte para adicionar';position:absolute;inset:0;z-index:100;display:grid;place-items:center;border:1px dashed var(--accent);border-radius:10px;background:rgba(35,35,35,.88);color:var(--ink);font-size:clamp(18px,3vw,28px);pointer-events:none}
     .piece{position:absolute;left:var(--x);top:var(--y);width:var(--w);z-index:var(--z);transform:translate(-50%,-50%);user-select:none}
     .piece img{display:block;width:100%;height:auto;border-radius:7px;pointer-events:none;user-select:none}
@@ -201,7 +202,7 @@
       window.addEventListener('pointercancel',finish,{once:true});
     }
     function startResize(event,item,node){
-      const startX=event.clientX,rect=stage.getBoundingClientRect(),isText=item.type==='text';
+      const startX=event.clientX,rect=stage.getBoundingClientRect(),isText=item.type==='text',gridSize=24;
       const targets=isText?[item]:elements.filter(entry=>selectedIds.has(entry.id)&&entry.type==='image');
       const resizingGroup=!isText&&targets.length>1;
       const bounds=resizingGroup?targets.reduce((box,entry)=>{
@@ -210,30 +211,39 @@
       },{left:Infinity,right:-Infinity}):null;
       const groupWidth=resizingGroup?Math.max(1,bounds.right-bounds.left):0;
       const startSizes=new Map(targets.map(entry=>[entry.id,isText?(entry.fontScale||2.1):entry.w]));
-      let raf=0,lastX=startX,nextSizes=new Map(startSizes);
-      const draw=clientX=>{
+      let raf=0,lastX=startX,lastFreeMove=event.ctrlKey,nextSizes=new Map(startSizes);
+      const snap=(pixels,min,max,freeMove)=>clamp(freeMove?pixels:Math.round(pixels/gridSize)*gridSize,min,max);
+      const draw=(clientX,freeMove=false)=>{
         const dx=clientX-startX;
         if(resizingGroup){
-          const factor=clamp(1+dx/groupWidth,.1,4);
+          const targetGroupWidth=snap(groupWidth+dx,Math.max(24,groupWidth*.1),Math.max(24,groupWidth*4),freeMove);
+          const factor=targetGroupWidth/groupWidth;
           for(const target of targets){
             const size=clamp(startSizes.get(target.id)*factor,5,100);
             nextSizes.set(target.id,size);nodes.get(target.id)?.style.setProperty('--w',size+'%');
           }
         }else{
-          const size=isText?clamp(startSizes.get(item.id)+dx/rect.width*100,1.2,10):clamp(startSizes.get(item.id)+dx/rect.width*100,5,100);
+          const startSize=startSizes.get(item.id);
+          const pixels=isText?startSize*rect.width/100:startSize*rect.width/100;
+          const min=isText?15:rect.width*.05,max=isText?100:rect.width;
+          const resized=snap(pixels+dx,min,max,freeMove);
+          const size=isText?resized/rect.width*100:resized/rect.width*100;
           nextSizes.set(item.id,size);
           if(isText)node.style.setProperty('--font-scale',size);
           else node.style.setProperty('--w',size+'%');
         }
       };
-      const move=nextEvent=>{lastX=nextEvent.clientX;if(!raf)raf=requestAnimationFrame(()=>{raf=0;draw(lastX)})};
+      const move=nextEvent=>{
+        lastX=nextEvent.clientX;lastFreeMove=nextEvent.ctrlKey;
+        if(!raf)raf=requestAnimationFrame(()=>{raf=0;draw(lastX,lastFreeMove)});
+      };
       const finish=nextEvent=>{
         window.removeEventListener('pointermove',move);window.removeEventListener('pointerup',finish);window.removeEventListener('pointercancel',finish);
         if(raf){cancelAnimationFrame(raf);raf=0}
-        draw(nextEvent.clientX);
+        draw(nextEvent.clientX,nextEvent.ctrlKey);
         for(const target of targets){
           const size=nextSizes.get(target.id);
-          if(isText){target.fontScale=size;nodes.get(target.id)?.style.setProperty('--font-scale',size)}
+          if(isText){target.fontScale=size*100/rect.width;nodes.get(target.id)?.style.setProperty('--font-scale',target.fontScale)}
           else{target.w=size;nodes.get(target.id)?.style.setProperty('--w',size+'%')}
         }
         setDirty('Tamanho atualizado. Salve para publicar.');
@@ -246,7 +256,8 @@
       user=owner?candidate:null;
       toolbar.classList.toggle('visible',owner);
       login.classList.toggle('visible',!owner);
-      $('#hint').textContent=owner?'Solte imagens ou links na prévia para adicioná-los. Clique repetidamente em itens sobrepostos para alternar a seleção. Arraste no espaço vazio para selecionar vários; Shift+clique adiciona à seleção. O movimento alinha ao grid invisível; segure Ctrl enquanto arrasta para ignorá-lo.':'Entre para editar o portfólio.';
+      stage.classList.toggle('editor-grid',owner);
+      $('#hint').textContent=owner?'Solte imagens ou links na prévia para adicioná-los. Clique repetidamente em itens sobrepostos para alternar a seleção. Arraste no espaço vazio para selecionar vários; Shift+clique adiciona à seleção. Movimento e redimensionamento alinham aos pontos do grid; segure Ctrl enquanto arrasta para ignorá-lo.':'Entre para editar o portfólio.';
       syncButtons();
       if(!owner&&!elements.length)say('');
     }
