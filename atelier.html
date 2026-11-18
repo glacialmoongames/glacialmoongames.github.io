@@ -92,10 +92,9 @@
       elements=Array.isArray(data?.elements)?data.elements:[];render();say(elements.length?'':'Ainda não há imagens ou textos publicados.');
     }
     async function refreshUser(session){
-      user=session?.user||null;const owner=user?.email?.toLowerCase()===OWNER_EMAIL;
+      const candidate=session?.user||null;const owner=candidate?.email?.toLowerCase()===OWNER_EMAIL;user=owner?candidate:null;
       toolbar.classList.toggle('visible',owner);loginPanel.classList.toggle('visible',!owner);
       $('#hint').textContent=owner?'Arraste para posicionar. Redimensione pela alça, edite textos com duplo clique e salve quando terminar.':'Faça login para adicionar imagens e textos. O acesso de edição é privado.';
-      if(user&&!owner)await client.auth.signOut();
       render();
     }
     $('#signin').addEventListener('click',async()=>{
