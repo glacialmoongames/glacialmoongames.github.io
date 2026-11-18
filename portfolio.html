@@ -10,27 +10,34 @@
     *{box-sizing:border-box}
     html,body{min-height:100%;margin:0}
     body{background:#232323;color:#e6e6e6;font-family:Arial,Helvetica,sans-serif;text-align:center}
-    header{padding:80px 20px 34px}
-    .logo{display:block;width:440px;max-width:calc(100vw - 40px);height:auto;margin:0 auto}
+    header{padding:34px 20px 26px}
+    .masthead{display:flex;align-items:center;justify-content:center;gap:20px;width:max-content;max-width:100%;margin:0 auto}
+    .logo{display:block;width:170px;max-width:48vw;height:auto}
+    h1{margin:0;font-size:28px;font-weight:700;white-space:nowrap}
     main{width:min(1160px,calc(100% - 40px));margin:0 auto 50px}
-    h1{margin:0 0 28px;font-size:28px;font-weight:700}
     #composition{position:relative;width:100%;aspect-ratio:3/2}
     .piece{position:absolute;left:var(--x);top:var(--y);width:var(--w);z-index:var(--z);transform:translate(-50%,-50%)}
-    .piece img{display:block;width:100%;height:auto;border-radius:7px}
+    .piece img{display:block;width:100%;height:auto;border-radius:7px;cursor:zoom-in}
     .piece.text{color:#e6e6e6;font-size:clamp(15px,2.1vw,30px);line-height:1.25;white-space:pre-wrap;overflow-wrap:anywhere}
-    @media(max-width:600px){header{padding:60px 20px 28px}.logo{width:220px}main{width:calc(100% - 28px)}h1{margin-bottom:22px;font-size:26px}}
+    .lightbox{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(0,0,0,.92);cursor:zoom-out}
+    .lightbox[hidden]{display:none}
+    .lightbox img{display:block;max-width:min(96vw,1800px);max-height:94vh;width:auto;height:auto;object-fit:contain;border-radius:7px;cursor:default}
+    @media(max-width:600px){header{padding:27px 14px 22px}.masthead{gap:12px}.logo{width:110px}h1{font-size:24px}main{width:calc(100% - 28px)}}
   </style>
 </head>
 <body>
-  <header><img class="logo" src="logo.png" alt="Glacial Moon Games"></header>
-  <main>
-    <h1>Portfólio</h1>
-    <section id="composition" aria-label="Portfólio"></section>
-  </main>
+  <header><div class="masthead"><img class="logo" src="logo.png" alt="Glacial Moon Games"><h1>Portfólio</h1></div></header>
+  <main><section id="composition" aria-label="Portfólio"></section></main>
+  <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Imagem em tamanho cheio" hidden><img id="lightbox-image" alt=""></div>
   <script type="module">
-    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.119.0';
     const client=createClient('https://sdchkvhzzcmpyszqtxlw.supabase.co','sb_publishable_hlQm6wS9WnADEVupUCqQ8Q_ulClFteW');
     const stage=document.getElementById('composition');
+    const lightbox=document.getElementById('lightbox');
+    const lightboxImage=document.getElementById('lightbox-image');
+    function closeLightbox(){lightbox.hidden=true;lightboxImage.removeAttribute('src');document.body.style.overflow=''}
+    lightbox.addEventListener('click',event=>{if(event.target===lightbox)closeLightbox()});
+    window.addEventListener('keydown',event=>{if(event.key==='Escape'&&!lightbox.hidden)closeLightbox()});
     const {data}=await client.from('studio_canvas').select('elements').eq('id',1).maybeSingle();
     for(const item of (Array.isArray(data?.elements)?data.elements:[])){
       const piece=document.createElement('div');
@@ -41,10 +48,8 @@
       piece.style.setProperty('--z',item.z);
       if(item.type==='image'){
         const img=document.createElement('img');
-        img.src=item.src;
-        img.alt=item.alt||'';
-        img.loading='lazy';
-        img.decoding='async';
+        img.src=item.src;img.alt=item.alt||'';img.loading='lazy';img.decoding='async';
+        img.addEventListener('click',()=>{lightboxImage.src=img.currentSrc||img.src;lightboxImage.alt=img.alt;lightbox.hidden=false;document.body.style.overflow='hidden'});
         piece.append(img);
       }else if(item.type==='text'){
         piece.textContent=item.text||'';
