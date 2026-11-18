@@ -34,6 +34,8 @@
     #composition{position:relative;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-content:start;column-gap:16px;row-gap:28px;width:100%;height:auto!important;min-height:calc(var(--canvas-min-height,0px) + var(--canvas-extra-space,0px));padding-bottom:var(--canvas-extra-space,0px);aspect-ratio:auto;touch-action:none;container-type:inline-size}
     #composition.icons-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
     #composition.single-column{grid-template-columns:1fr}
+    #composition.single-column .piece:not(.text){aspect-ratio:auto;display:block}
+    #composition.single-column .piece:not(.text) img{height:auto}
     #composition.editor-grid{background-image:radial-gradient(circle,rgba(230,230,230,.2) 1px,transparent 1.4px);background-size:16px 16px;background-position:0 0}
     #composition.drop-active::after{content:'Solte para adicionar';position:absolute;inset:0;z-index:100;display:grid;place-items:center;border:1px dashed var(--accent);border-radius:10px;background:rgba(35,35,35,.88);color:var(--ink);font-size:clamp(18px,3vw,28px);pointer-events:none}
     .piece{position:absolute;left:var(--x);top:var(--y);width:var(--w);z-index:var(--z);transform:translate(-50%,-50%);user-select:none}
