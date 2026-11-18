@@ -255,7 +255,7 @@
     let dragDepth=0;
     function hasImageTransfer(event){
       const types=Array.from(event.dataTransfer?.types||[]);
-      return types.includes('Files')||types.includes('text/uri-list')||types.includes('text/x-moz-url')||types.includes('text/html');
+      return types.includes('Files')||types.includes('text/uri-list')||types.includes('text/x-moz-url')||types.includes('text/html')||types.includes('text/plain');
     }
     function getDroppedImageUrl(transfer){
       const candidates=[
