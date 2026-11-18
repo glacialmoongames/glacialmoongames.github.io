@@ -14,7 +14,7 @@
     .masthead{display:flex;align-items:center;justify-content:center;gap:20px;width:max-content;max-width:100%;margin:0 auto}
     .logo{display:block;width:170px;max-width:48vw;height:auto}
     h1{margin:0;font-size:28px;font-weight:700;white-space:nowrap}
-    .canvas-tabs{display:flex;justify-content:center;gap:8px;margin:0 auto 22px}
+    .canvas-tabs{display:flex;justify-content:center;gap:0;flex-wrap:wrap;margin:0 auto 22px}
     .canvas-tabs a{min-width:0;padding:8px 16px;border:0;border-radius:0;color:#aaa;font-size:13px;letter-spacing:.08em;text-decoration:none}
     .canvas-tabs a+a{border-left:1px solid #666}
     .canvas-tabs a.active{color:#f47b20;font-weight:700}
@@ -26,12 +26,18 @@
     .lightbox{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(0,0,0,.92);cursor:zoom-out}
     .lightbox[hidden]{display:none}
     .lightbox img{display:block;max-width:min(96vw,1800px);max-height:94vh;width:auto;height:auto;object-fit:contain;border-radius:7px;cursor:default}
-    @media(max-width:600px){header{padding:27px 14px 22px}.masthead{gap:12px}.logo{width:110px}h1{font-size:24px}.canvas-tabs{margin-bottom:18px}.canvas-tabs a{padding:8px 10px;font-size:11px}main{width:calc(100% - 28px)}}
+    @media(max-width:600px){header{padding:27px 14px 22px}.masthead{gap:12px}.logo{width:110px}h1{font-size:24px}.canvas-tabs{justify-content:flex-start;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin-bottom:18px}.canvas-tabs::-webkit-scrollbar{display:none}.canvas-tabs a{flex:0 0 auto;padding:8px 10px;font-size:11px;white-space:nowrap}main{width:calc(100% - 28px)}}
   </style>
 </head>
 <body>
   <header><div class="masthead"><img class="logo" src="logo.png" alt="Glacial Moon Games"><h1>Portfólio</h1></div></header>
-  <nav class="canvas-tabs" aria-label="Portfólios"><a href="portfolio.html" data-tab-en="STYLES" data-tab-pt="ESTILOS">ESTILOS</a><a class="active" href="personagens.html" aria-current="page" data-tab-en="CHARACTERS" data-tab-pt="PERSONAGENS">PERSONAGENS</a></nav>
+  <nav class="canvas-tabs" aria-label="Portfólios">
+    <a href="portfolio.html" data-tab-en="ICON'S" data-tab-pt="ICON'S">ICON'S</a>
+    <a href="full-body.html" data-tab-en="FULL BODY" data-tab-pt="FULL BODY">FULL BODY</a>
+    <a href="full-art.html" data-tab-en="FULL ART" data-tab-pt="FULL ART">FULL ART</a>
+    <a href="character-sheets.html" data-tab-en="CHARACTER SHEETS" data-tab-pt="CHARACTER SHEETS">CHARACTER SHEETS</a>
+    <a class="active" href="personagens.html" aria-current="page" data-tab-en="CHARACTERS" data-tab-pt="PERSONAGENS">PERSONAGENS</a>
+  </nav>
   <main><section id="composition" aria-label="Portfólio"></section></main>
   <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Imagem em tamanho cheio" hidden><img id="lightbox-image" alt="" draggable="true"></div>
   <script type="module">
