@@ -27,7 +27,7 @@
     #status{min-height:18px;color:var(--muted);font-size:12px;margin:0 0 10px}
     .login-row{margin-bottom:8px}
     #composition{position:relative;width:100%;height:auto;aspect-ratio:auto;touch-action:none;container-type:inline-size}
-    #composition.editor-grid{background-image:radial-gradient(circle,rgba(230,230,230,.2) 1px,transparent 1.4px);background-size:24px 24px;background-position:0 0}
+    #composition.editor-grid{background-image:radial-gradient(circle,rgba(230,230,230,.2) 1px,transparent 1.4px);background-size:16px 16px;background-position:0 0}
     #composition.drop-active::after{content:'Solte para adicionar';position:absolute;inset:0;z-index:100;display:grid;place-items:center;border:1px dashed var(--accent);border-radius:10px;background:rgba(35,35,35,.88);color:var(--ink);font-size:clamp(18px,3vw,28px);pointer-events:none}
     .piece{position:absolute;left:var(--x);top:var(--y);width:var(--w);z-index:var(--z);transform:translate(-50%,-50%);user-select:none}
     .piece img{display:block;width:100%;height:auto;border-radius:7px;pointer-events:none;user-select:none}
@@ -170,7 +170,7 @@
         const bounds=nodes.get(entry.id)?.getBoundingClientRect();
         return {item:entry,node:nodes.get(entry.id),x:entry.x,y:entry.y,width:bounds?.width||0,height:bounds?.height||0};
       });
-      const gridSize=24,finalPositions=new Map();
+      const gridSize=16,finalPositions=new Map();
       let raf=0,lastX=startX,lastY=startY,lastFreeMove=false;
       const draw=(clientX,clientY,freeMove=false)=>{
         const dx=clientX-startX,dy=clientY-startY;
@@ -208,7 +208,7 @@
       window.addEventListener('pointercancel',finish,{once:true});
     }
     function startResize(event,item,node){
-      const startX=event.clientX,rect=stage.getBoundingClientRect(),isText=item.type==='text',gridSize=24;
+      const startX=event.clientX,rect=stage.getBoundingClientRect(),isText=item.type==='text',gridSize=16;
       const targets=isText?[item]:elements.filter(entry=>selectedIds.has(entry.id)&&entry.type==='image');
       const resizingGroup=!isText&&targets.length>1;
       const entries=targets.map(target=>{
