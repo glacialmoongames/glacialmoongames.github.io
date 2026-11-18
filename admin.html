@@ -32,6 +32,8 @@
     .piece img{display:block;width:100%;height:auto;border-radius:7px;pointer-events:none;user-select:none}
     .piece.text{color:#e6e6e6;font-family:Arial,Helvetica,sans-serif;font-size:clamp(15px,calc(var(--font-scale,2.1)*1cqw),100px);line-height:1.25;white-space:pre-wrap;overflow-wrap:anywhere}
     .piece.selected{outline:1px dashed var(--accent);outline-offset:4px}
+    .selection-box{position:absolute;z-index:1000;border:1px solid var(--accent);background:rgba(244,123,32,.14);pointer-events:none}
+    .selection-box[hidden]{display:none}
     .resize-handle{display:none;position:absolute;width:14px;height:14px;right:-7px;bottom:-7px;border:2px solid var(--bg);border-radius:50%;background:var(--accent);cursor:nwse-resize;touch-action:none}
     .piece.selected .resize-handle{display:block}
     .lightbox{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(0,0,0,.92);cursor:zoom-out}
@@ -67,6 +69,7 @@
     const client=createClient(SUPABASE_URL,SUPABASE_KEY);
     const $=selector=>document.querySelector(selector);
     const stage=$('#composition'),status=$('#status'),toolbar=$('#toolbar'),login=$('#login');
+    const selectionBox=document.createElement('div');selectionBox.className='selection-box';selectionBox.hidden=true;
     const lightbox=$('#lightbox'),lightboxImage=$('#lightbox-image');
     let elements=[],selectedIds=new Set(),nodes=new Map(),user=null,dirty=false,extraSpace=0;
     let overlapCycle={x:NaN,y:NaN,index:0,ids:[]};
@@ -121,6 +124,7 @@
     function render(){
       nodes.clear();stage.replaceChildren();updateStageHeight();
       for(const item of elements)stage.append(createPiece(item));
+      stage.append(selectionBox);
       syncSelection();
     }
     function setDirty(message){
@@ -217,7 +221,7 @@
       user=owner?candidate:null;
       toolbar.classList.toggle('visible',owner);
       login.classList.toggle('visible',!owner);
-      $('#hint').textContent=owner?'Solte imagens ou links na prévia para adicioná-los. Clique repetidamente em itens sobrepostos para alternar a seleção; arraste para mover. Shift+clique seleciona vários.':'Entre para editar o portfólio.';
+      $('#hint').textContent=owner?'Solte imagens ou links na prévia para adicioná-los. Clique repetidamente em itens sobrepostos para alternar a seleção. Arraste no espaço vazio para selecionar vários; Shift+clique adiciona à seleção.':'Entre para editar o portfólio.';
       syncButtons();
       if(!owner&&!elements.length)say('');
     }
@@ -378,7 +382,44 @@
       dirty=false;syncButtons();say('Portfólio salvo.');
     });
     $('#signout').addEventListener('click',async()=>{await client.auth.signOut();say('Sessão encerrada.')});
-    stage.addEventListener('pointerdown',event=>{if(event.target===stage){selectedIds.clear();syncSelection()}});
+    stage.addEventListener('pointerdown',event=>{
+      if(event.target!==stage||!user)return;
+      event.preventDefault();
+      const startX=event.clientX,startY=event.clientY;
+      const stageRect=stage.getBoundingClientRect();
+      const keepSelection=event.shiftKey||event.ctrlKey||event.metaKey;
+      const baseSelection=keepSelection?new Set(selectedIds):new Set();
+      let raf=0,lastX=startX,lastY=startY;
+      const draw=(clientX,clientY)=>{
+        const left=Math.min(startX,clientX)-stageRect.left;
+        const top=Math.min(startY,clientY)-stageRect.top;
+        selectionBox.style.left=left+'px';selectionBox.style.top=top+'px';
+        selectionBox.style.width=Math.abs(clientX-startX)+'px';selectionBox.style.height=Math.abs(clientY-startY)+'px';
+      };
+      selectionBox.hidden=false;
+      const move=nextEvent=>{
+        lastX=nextEvent.clientX;lastY=nextEvent.clientY;
+        if(!raf)raf=requestAnimationFrame(()=>{raf=0;draw(lastX,lastY)});
+      };
+      const finish=nextEvent=>{
+        window.removeEventListener('pointermove',move);window.removeEventListener('pointerup',finish);window.removeEventListener('pointercancel',finish);
+        if(raf){cancelAnimationFrame(raf);raf=0}
+        draw(nextEvent.clientX,nextEvent.clientY);selectionBox.hidden=true;
+        const moved=Math.abs(nextEvent.clientX-startX)+Math.abs(nextEvent.clientY-startY)>4;
+        if(!moved){if(!keepSelection)selectedIds.clear();syncSelection();return}
+        const left=Math.min(startX,nextEvent.clientX),right=Math.max(startX,nextEvent.clientX);
+        const top=Math.min(startY,nextEvent.clientY),bottom=Math.max(startY,nextEvent.clientY);
+        selectedIds=baseSelection;
+        for(const item of elements){
+          const rect=nodes.get(item.id)?.getBoundingClientRect();
+          if(rect&&rect.right>=left&&rect.left<=right&&rect.bottom>=top&&rect.top<=bottom)selectedIds.add(item.id);
+        }
+        syncSelection();
+      };
+      window.addEventListener('pointermove',move);
+      window.addEventListener('pointerup',finish,{once:true});
+      window.addEventListener('pointercancel',finish,{once:true});
+    });
     client.auth.onAuthStateChange((_event,session)=>refreshUser(session));
     const {data:sessionData}=await client.auth.getSession();
     refreshUser(sessionData.session);
