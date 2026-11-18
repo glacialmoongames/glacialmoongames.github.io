@@ -56,8 +56,8 @@
   <header><div class="masthead"><img class="logo" src="logo.png" alt="Glacial Moon Games"><h1>Portfólio</h1></div></header>
   <main>
     <nav id="canvas-tabs" class="canvas-tabs" aria-label="Portfólios">
-      <button type="button" class="canvas-tab active" data-canvas-id="1" aria-pressed="true">ESTILOS / STYLES</button>
-      <button type="button" class="canvas-tab" data-canvas-id="2" aria-pressed="false">PERSONAGENS / CHARACTERS</button>
+      <button type="button" class="canvas-tab active" data-canvas-id="1" data-tab-en="STYLES" data-tab-pt="ESTILOS" aria-pressed="true">ESTILOS</button>
+      <button type="button" class="canvas-tab" data-canvas-id="2" data-tab-en="CHARACTERS" data-tab-pt="PERSONAGENS" aria-pressed="false">PERSONAGENS</button>
     </nav>
     <div id="login" class="login-row">
       <input id="email" type="email" autocomplete="email" placeholder="E-mail de administrador" aria-label="E-mail">
@@ -82,6 +82,10 @@
     const BUCKET='studio-art';
     const client=createClient(SUPABASE_URL,SUPABASE_KEY);
     const $=selector=>document.querySelector(selector);
+    const preferredLanguage=(navigator.languages&&navigator.languages[0])||navigator.language||'en';
+    const usePortuguese=/^pt(?:-|$)/i.test(preferredLanguage);
+    document.documentElement.lang=usePortuguese?'pt-BR':'en';
+    for(const tab of document.querySelectorAll('[data-tab-en]'))tab.textContent=usePortuguese?tab.dataset.tabPt:tab.dataset.tabEn;
     const stage=$('#composition'),status=$('#status'),toolbar=$('#toolbar'),login=$('#login');
     const selectionBox=document.createElement('div');selectionBox.className='selection-box';selectionBox.hidden=true;
     const lightbox=$('#lightbox'),lightboxImage=$('#lightbox-image');
