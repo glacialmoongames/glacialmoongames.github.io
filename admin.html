@@ -170,6 +170,7 @@
     function setDirty(message){
       dirty=true;syncButtons();if(message)say(message);
     }
+    function highestLayer(){return elements.reduce((highest,item)=>Math.max(highest,Number.isFinite(Number(item.z))?Number(item.z):0),0)}
     function startPointer(event,item,node){
       if(!user)return;
       if(node.querySelector('.text-content')?.isContentEditable&&event.target.closest('.text-content'))return;
@@ -534,7 +535,7 @@
       if(!user)return;
       const text=prompt('Texto para o portfólio:','Seu texto');
       if(text===null||!text.trim())return;
-      const item={id:crypto.randomUUID(),type:'text',text:text.trim(),x:50,y:50,w:34,fontScale:2.1,fontSize:32,z:Math.max(0,...elements.map(entry=>entry.z))+1};
+      const item={id:crypto.randomUUID(),type:'text',text:text.trim(),x:50,y:50,w:34,fontScale:2.1,fontSize:32,z:highestLayer()+1};
       elements.push(item);selectedIds=new Set([item.id]);stage.append(createPiece(item));setDirty('Texto adicionado. Salve para publicar.');syncSelection();
     });
     $('#edit-text').addEventListener('click',()=>{
