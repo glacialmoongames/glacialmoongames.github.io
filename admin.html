@@ -215,7 +215,7 @@
       user=owner?candidate:null;
       toolbar.classList.toggle('visible',owner);
       login.classList.toggle('visible',!owner);
-      $('#hint').textContent=owner?'Solte imagens ou links na prévia para adicioná-los. Arraste para mover; Shift+clique seleciona vários itens.':'Entre para editar o portfólio.';
+      $('#hint').textContent=owner?'Solte imagens ou links na prévia para adicioná-los. Clique repetidamente em itens sobrepostos para alternar a seleção; arraste para mover. Shift+clique seleciona vários.':'Entre para editar o portfólio.';
       syncButtons();
       if(!owner&&!elements.length)say('');
     }
