@@ -217,7 +217,7 @@
           const file=files[index],path=crypto.randomUUID()+'-'+file.name.replace(/[^a-zA-Z0-9._-]/g,'-');
           const {error}=await client.storage.from(BUCKET).upload(path,file,{cacheControl:'31536000',upsert:false});
           if(error)results[index]={error};
-          else{const publicUrl=client.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;results[index]={src:publicUrl,alt:file.name.replace(/\\.[^.]+$/,'')}}
+          else{const publicUrl=client.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;results[index]={src:publicUrl,alt:file.name.replace(/\.[^.]+$/,'')}}
         }
       }
       await Promise.all(Array.from({length:Math.min(3,files.length)},worker));
@@ -274,7 +274,7 @@
       const transfer=event.dataTransfer;
       if(!transfer)return;
       const files=[...transfer.files].filter(file=>file.type.startsWith('image/'));
-      const uri=transfer.getData('text/uri-list').split(/\\r?\\n/).find(line=>line.trim()&&!line.startsWith('#'));
+      const uri=transfer.getData('text/uri-list').split(/\r?\n/).find(line=>line.trim()&&!line.startsWith('#'));
       if(!files.length&&!uri&&!hasImageTransfer(event))return;
       event.preventDefault();dragDepth=0;stage.classList.remove('drop-active');
       if(files.length){await uploadImages(files);return}
