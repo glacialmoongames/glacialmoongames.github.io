@@ -4,121 +4,280 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#232323">
-  <title>Administração do portfólio — Glacial Moon Games</title>
+  <title>Administração do Portfólio — Glacial Moon Games</title>
+  <link rel="icon" type="image/png" href="logoaba.png">
   <style>
-    :root{color-scheme:dark;--bg:#232323;--panel:#2d2d2d;--ink:#e6e6e6;--muted:#aaa;--accent:#f47b20;--line:#494949}
-    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px Arial,Helvetica,sans-serif;min-height:100vh}
-    header{max-width:1160px;margin:auto;padding:34px 24px 24px;display:flex;align-items:center;justify-content:space-between;gap:20px}
-    .brand{color:var(--ink);font-size:13px;letter-spacing:.17em;text-transform:uppercase}.brand span{color:var(--accent)}
-    .back{color:var(--muted);text-decoration:none;font-size:14px}.back:hover{color:white}
-    main{max-width:1160px;margin:0 auto;padding:28px 24px 70px}
-    .intro{display:flex;align-items:end;justify-content:space-between;gap:24px;margin-bottom:24px}
-    h1{font-size:clamp(30px,5vw,48px);margin:0 0 9px;letter-spacing:-.035em} .intro p{margin:0;color:var(--muted);line-height:1.6}
-    .status{font-size:13px;color:var(--muted);min-height:20px;text-align:right}
-    .toolbar{display:none;align-items:center;flex-wrap:wrap;gap:9px;padding:12px;margin-bottom:14px;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
-    .toolbar.visible{display:flex}button,.button{appearance:none;border:1px solid #5b5b5b;border-radius:8px;background:#393939;color:var(--ink);padding:10px 14px;font:inherit;font-size:14px;text-decoration:none;cursor:pointer;transition:.15s}
-    button:hover,.button:hover{border-color:#888;background:#414141}button.primary{background:var(--accent);border-color:var(--accent);color:#171717;font-weight:700}button.primary:hover{background:#ff9140}
-    button:disabled{opacity:.55;cursor:wait}.tool-spacer{flex:1}.login{display:flex;gap:8px;align-items:center}.login input{width:min(270px,55vw);padding:10px 12px;border:1px solid #555;border-radius:8px;background:#202020;color:var(--ink);font:inherit}
-    .canvas-shell{border:1px solid var(--line);border-radius:14px;padding:10px;background:#1d1d1d;box-shadow:0 18px 55px #0003}
-    #stage{position:relative;width:100%;aspect-ratio:3/2;overflow:hidden;border-radius:9px;background-color:#292929;background-image:radial-gradient(#ffffff0d 1px,transparent 1px);background-size:18px 18px;touch-action:none}
-    .element{position:absolute;left:var(--x);top:var(--y);width:var(--w);z-index:var(--z);transform:translate(-50%,-50%);touch-action:none;user-select:none}
-    .element img{display:block;width:100%;height:auto;border-radius:7px;pointer-events:none}
-    .element.text{color:#e6e6e6;font-size:clamp(14px,2.1vw,30px);line-height:1.25;white-space:pre-wrap;overflow-wrap:anywhere;text-shadow:0 2px 5px #0008;min-height:1.3em}
-    .element.selected{outline:1px dashed var(--accent);outline-offset:5px}.resize-handle{display:none;position:absolute;width:15px;height:15px;right:-8px;bottom:-8px;border:2px solid var(--bg);border-radius:50%;background:var(--accent);cursor:nwse-resize;touch-action:none}.selected .resize-handle{display:block}
-    .empty{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:24px;color:#858585;line-height:1.6;pointer-events:none}.empty strong{color:#bdbdbd;font-weight:500}
-    .hint{color:#888;font-size:12px;line-height:1.5;margin:12px 4px 0}.hidden{display:none!important}
-    @media(max-width:680px){header{padding:24px 18px 12px}main{padding:22px 14px 48px}.intro{display:block}.status{text-align:left;margin-top:12px}.canvas-shell{padding:6px;border-radius:11px}#stage{border-radius:7px}.toolbar{padding:9px;gap:7px}button,.button{padding:9px 11px;font-size:13px}.tool-spacer{display:none}.login{width:100%}.login input{flex:1}}
+    :root{color-scheme:dark;--bg:#232323;--ink:#e6e6e6;--muted:#aaa;--accent:#f47b20;--line:#4a4a4a}
+    *{box-sizing:border-box}html,body{min-height:100%;margin:0}
+    body{background:var(--bg);color:var(--ink);font:16px Arial,Helvetica,sans-serif;text-align:center}
+    header{padding:34px 20px 26px}
+    .masthead{display:flex;align-items:center;justify-content:center;gap:20px;width:max-content;max-width:100%;margin:0 auto}
+    .logo{display:block;width:170px;max-width:48vw;height:auto}
+    h1{margin:0;font-size:28px;font-weight:700;white-space:nowrap}
+    main{width:min(1160px,calc(100% - 40px));margin:0 auto 48px}
+    .toolbar,.login-row{display:none;align-items:center;justify-content:center;flex-wrap:wrap;gap:7px;margin:0 auto 14px}
+    .toolbar.visible,.login-row.visible{display:flex}
+    button,.button{appearance:none;border:1px solid var(--line);border-radius:8px;background:#303030;color:var(--ink);padding:8px 11px;font:inherit;font-size:13px;cursor:pointer;transition:background .12s,border-color .12s}
+    button:hover,.button:hover{background:#393939;border-color:#696969}
+    button.primary{background:var(--accent);border-color:var(--accent);color:#171717;font-weight:700}
+    button.primary:hover{background:#ff9140}
+    button:disabled{opacity:.42;cursor:default}
+    input[type=email]{width:min(290px,62vw);padding:9px 11px;border:1px solid var(--line);border-radius:8px;background:#1d1d1d;color:var(--ink);font:inherit}
+    input[type=file]{display:none}
+    #status{min-height:18px;color:var(--muted);font-size:12px;margin:0 0 10px}
+    .login-row{margin-bottom:8px}
+    #composition{position:relative;width:100%;aspect-ratio:3/2;touch-action:none}
+    .piece{position:absolute;left:var(--x);top:var(--y);width:var(--w);z-index:var(--z);transform:translate(-50%,-50%);user-select:none}
+    .piece img{display:block;width:100%;height:auto;border-radius:7px;pointer-events:none;user-select:none}
+    .piece.text{color:#e6e6e6;font-size:clamp(15px,2.1vw,30px);line-height:1.25;white-space:pre-wrap;overflow-wrap:anywhere}
+    .piece.selected{outline:1px dashed var(--accent);outline-offset:4px}
+    .resize-handle{display:none;position:absolute;width:14px;height:14px;right:-7px;bottom:-7px;border:2px solid var(--bg);border-radius:50%;background:var(--accent);cursor:nwse-resize;touch-action:none}
+    .piece.selected .resize-handle{display:block}
+    .lightbox{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(0,0,0,.92);cursor:zoom-out}
+    .lightbox[hidden]{display:none}.lightbox img{display:block;max-width:min(96vw,1800px);max-height:94vh;width:auto;height:auto;object-fit:contain;border-radius:7px;cursor:default}
+    #hint{color:#777;font-size:12px;margin:8px auto 0}
+    @media(max-width:700px){header{padding:27px 14px 22px}.masthead{gap:12px}.logo{width:110px}h1{font-size:24px}main{width:calc(100% - 28px)}.toolbar,.login-row{gap:6px;margin-bottom:12px}button,.button{padding:8px 9px;font-size:12px}input[type=email]{width:min(250px,60vw)}}
   </style>
 </head>
 <body>
-  <header><a class="brand" href="portfolio.html">GLACIAL <span>MOON</span> GAMES</a><a class="back" href="portfolio.html">← Ver portfólio</a></header>
+  <header><div class="masthead"><img class="logo" src="logo.png" alt="Glacial Moon Games"><h1>Portfólio</h1></div></header>
   <main>
-    <section class="intro"><div><h1>Editar portfólio</h1><p>Área de administração.</p></div><div id="status" class="status" role="status" aria-live="polite">Carregando…</div></section>
-    <section id="toolbar" class="toolbar" aria-label="Ferramentas do ateliê">
-      <label class="button" for="image-input">Adicionar imagem</label><input class="hidden" id="image-input" type="file" accept="image/*" multiple>
-      <button id="add-text">Adicionar texto</button><button id="front">Trazer para frente</button><button id="backward">Enviar para trás</button><button id="delete">Remover</button>
-      <span class="tool-spacer"></span><button id="save" class="primary">Salvar alterações</button><button id="signout">Sair</button>
-    </section>
-    <section id="login" class="toolbar visible" aria-label="Acesso do artista">
-      <div class="login"><input id="email" type="email" autocomplete="email" placeholder="Seu e-mail" aria-label="E-mail"><button id="signin" class="primary">Enviar link de acesso</button></div>
-    </section>
-    <div class="canvas-shell"><div id="stage" aria-label="Tela do ateliê"><div id="empty" class="empty"><div><strong>As imagens e textos publicados aparecerão aqui.</strong><br>O acesso de edição é privado.</div></div></div></div>
-    <p id="hint" class="hint">Faça login para adicionar imagens e textos. Arraste os elementos para posicioná-los; use a alça no canto para redimensionar.</p>
+    <div id="login" class="login-row">
+      <input id="email" type="email" autocomplete="email" placeholder="E-mail de administrador" aria-label="E-mail">
+      <button id="signin" class="primary">Entrar</button>
+    </div>
+    <nav id="toolbar" class="toolbar" aria-label="Ferramentas de edição">
+      <label class="button" for="image-input">+ Imagens</label><input id="image-input" type="file" accept="image/*" multiple>
+      <button id="add-text">+ Texto</button><button id="edit-text" disabled>Editar texto</button><button id="view-image" disabled>Ver imagem</button>
+      <button id="front" disabled>Trazer à frente</button><button id="backward" disabled>Enviar atrás</button><button id="delete" disabled>Remover</button>
+      <button id="save" class="primary" disabled>Salvar</button><button id="signout">Sair</button>
+    </nav>
+    <div id="status" role="status" aria-live="polite"></div>
+    <section id="composition" aria-label="Prévia do portfólio"></section>
+    <p id="hint">Entre para editar. Arraste elementos; Shift+clique seleciona vários. Arraste a alça para redimensionar e use “Ver imagem” para abrir uma imagem inteira.</p>
   </main>
+  <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Imagem em tamanho cheio" hidden><img id="lightbox-image" alt=""></div>
   <script type="module">
-    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-    // Preencher com a Project URL e a chave pública (anon/publishable) do Supabase.
-    const SUPABASE_URL = 'https://sdchkvhzzcmpyszqtxlw.supabase.co';
-    const SUPABASE_ANON_KEY = 'sb_publishable_hlQm6wS9WnADEVupUCqQ8Q_ulClFteW';
-    const OWNER_EMAIL = 'glacialmoongames@gmail.com';
-    const BUCKET = 'studio-art';
-    const isReady = !SUPABASE_URL.includes('COLE_A_') && !SUPABASE_ANON_KEY.includes('COLE_A_');
-    const client = isReady ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
-    const $ = (s) => document.querySelector(s);
-    const stage = $('#stage'), status = $('#status'), toolbar = $('#toolbar'), loginPanel = $('#login');
-    let elements = [], selected = null, user = null, dirty = false;
-    const say = (message) => { status.textContent = message; };
-    const safeError = (error) => error?.message || 'Não foi possível concluir. Confira a conexão e tente novamente.';
+    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.119.0';
+    const SUPABASE_URL='https://sdchkvhzzcmpyszqtxlw.supabase.co';
+    const SUPABASE_KEY='sb_publishable_hlQm6wS9WnADEVupUCqQ8Q_ulClFteW';
+    const OWNER_EMAIL='glacialmoongames@gmail.com';
+    const BUCKET='studio-art';
+    const client=createClient(SUPABASE_URL,SUPABASE_KEY);
+    const $=selector=>document.querySelector(selector);
+    const stage=$('#composition'),status=$('#status'),toolbar=$('#toolbar'),login=$('#login');
+    const lightbox=$('#lightbox'),lightboxImage=$('#lightbox-image');
+    let elements=[],selectedIds=new Set(),nodes=new Map(),user=null,dirty=false;
+    const say=message=>{status.textContent=message};
+    const clamp=(value,min,max)=>Math.max(min,Math.min(max,value));
 
+    function closeLightbox(){lightbox.hidden=true;lightboxImage.removeAttribute('src');document.body.style.overflow=''}
+    function openLightbox(item){lightboxImage.src=item.src;lightboxImage.alt=item.alt||'';lightbox.hidden=false;document.body.style.overflow='hidden'}
+    lightbox.addEventListener('click',event=>{if(event.target===lightbox)closeLightbox()});
+    window.addEventListener('keydown',event=>{if(event.key==='Escape'&&!lightbox.hidden)closeLightbox()});
+
+    function syncSelection(){
+      for(const [id,node] of nodes)node.classList.toggle('selected',selectedIds.has(id));
+      syncButtons();
+    }
+    function syncButtons(){
+      const chosen=elements.filter(item=>selectedIds.has(item.id));
+      $('#delete').disabled=chosen.length===0;
+      $('#front').disabled=chosen.length===0;
+      $('#backward').disabled=chosen.length===0;
+      $('#edit-text').disabled=chosen.length!==1||chosen[0]?.type!=='text';
+      $('#view-image').disabled=chosen.length!==1||chosen[0]?.type!=='image';
+      $('#save').disabled=!user||!dirty;
+    }
+    function stylePiece(node,item){
+      node.style.setProperty('--x',item.x+'%');
+      node.style.setProperty('--y',item.y+'%');
+      node.style.setProperty('--w',item.w+'%');
+      node.style.setProperty('--z',item.z);
+      node.style.transform='translate(-50%,-50%)';
+    }
+    function createPiece(item){
+      const node=document.createElement('div');
+      node.className='piece'+(item.type==='text'?' text':'');
+      node.dataset.id=item.id;
+      stylePiece(node,item);
+      if(item.type==='image'){
+        const img=document.createElement('img');
+        img.src=item.src;img.alt=item.alt||'';img.loading='lazy';img.decoding='async';img.draggable=false;
+        node.append(img);
+      }else{
+        node.textContent=item.text||'';
+      }
+      const handle=document.createElement('span');handle.className='resize-handle';handle.setAttribute('aria-hidden','true');node.append(handle);
+      node.addEventListener('pointerdown',event=>startPointer(event,item,node));
+      nodes.set(item.id,node);
+      return node;
+    }
     function render(){
-      stage.querySelectorAll('.element').forEach(el=>el.remove());
-      $('#empty').classList.toggle('hidden', elements.length>0);
-      elements.forEach((item)=>{
-        const node=document.createElement('div'); node.className='element'+(item.type==='text'?' text':'')+(selected===item.id?' selected':'');
-        node.dataset.id=item.id; node.style.setProperty('--x',item.x+'%'); node.style.setProperty('--y',item.y+'%'); node.style.setProperty('--w',item.w+'%'); node.style.setProperty('--z',item.z);
-        if(item.type==='image'){const img=document.createElement('img');img.src=item.src;img.alt=item.alt||'';img.draggable=false;node.append(img)}
-        else {node.textContent=item.text||'Clique duas vezes para editar';node.contentEditable=!!user;node.spellcheck=true;node.addEventListener('input',()=>{item.text=node.textContent;dirty=true})}
-        const handle=document.createElement('span');handle.className='resize-handle';handle.setAttribute('aria-hidden','true');node.append(handle);
-        node.addEventListener('pointerdown',(event)=>startPointer(event,item,node));
-        node.addEventListener('dblclick',()=>{if(user&&item.type==='text'){node.focus();document.getSelection()?.selectAllChildren(node)}});
-        stage.append(node);
-      });
-      $('#delete').disabled=!selected; $('#front').disabled=!selected; $('#backward').disabled=!selected; $('#save').disabled=!user||!dirty;
+      nodes.clear();stage.replaceChildren();
+      for(const item of elements)stage.append(createPiece(item));
+      syncSelection();
+    }
+    function setDirty(message){
+      dirty=true;syncButtons();if(message)say(message);
     }
     function startPointer(event,item,node){
       if(!user)return;
-      if(event.target===node.querySelector('.resize-handle')){event.preventDefault();event.stopPropagation();selected=item.id;const sx=event.clientX, start=item.w, rect=stage.getBoundingClientRect();
-        const move=e=>{item.w=Math.max(5,Math.min(100,start+(e.clientX-sx)/rect.width*100));node.style.setProperty('--w',item.w+'%');dirty=true};
-        const end=()=>{window.removeEventListener('pointermove',move);window.removeEventListener('pointerup',end);render()};window.addEventListener('pointermove',move);window.addEventListener('pointerup',end,{once:true});render();return;}
-      if(event.target.isContentEditable)return;
-      event.preventDefault();selected=item.id;const rect=stage.getBoundingClientRect(), sx=event.clientX,sy=event.clientY,ox=item.x,oy=item.y;
-      const move=e=>{item.x=Math.max(0,Math.min(100,ox+(e.clientX-sx)/rect.width*100));item.y=Math.max(0,Math.min(100,oy+(e.clientY-sy)/rect.height*100));node.style.setProperty('--x',item.x+'%');node.style.setProperty('--y',item.y+'%');dirty=true};
-      const end=()=>{window.removeEventListener('pointermove',move);render()};window.addEventListener('pointermove',move);window.addEventListener('pointerup',end,{once:true});render();
+      if(event.target===node.querySelector('.resize-handle')){
+        event.preventDefault();event.stopPropagation();
+        selectedIds=new Set([item.id]);syncSelection();
+        startResize(event,item,node);return;
+      }
+      const multi=event.shiftKey||event.ctrlKey||event.metaKey;
+      if(multi){
+        if(selectedIds.has(item.id)){selectedIds.delete(item.id);syncSelection();return}
+        selectedIds.add(item.id);
+      }else if(!selectedIds.has(item.id)){
+        selectedIds=new Set([item.id]);
+      }
+      if(!selectedIds.has(item.id))return;
+      event.preventDefault();syncSelection();
+      const moving=elements.filter(entry=>selectedIds.has(entry.id));
+      const startX=event.clientX,startY=event.clientY,rect=stage.getBoundingClientRect();
+      const startPositions=moving.map(entry=>({item:entry,node:nodes.get(entry.id),x:entry.x,y:entry.y}));
+      let raf=0,lastX=startX,lastY=startY,deltaX=0,deltaY=0;
+      const draw=(clientX,clientY)=>{
+        deltaX=clientX-startX;deltaY=clientY-startY;
+        for(const entry of startPositions){
+          if(entry.node)entry.node.style.transform='translate3d(calc(-50% + '+deltaX+'px),calc(-50% + '+deltaY+'px),0)';
+        }
+      };
+      const move=nextEvent=>{
+        lastX=nextEvent.clientX;lastY=nextEvent.clientY;
+        if(!raf)raf=requestAnimationFrame(()=>{raf=0;draw(lastX,lastY)});
+      };
+      const finish=nextEvent=>{
+        window.removeEventListener('pointermove',move);
+        window.removeEventListener('pointerup',finish);
+        window.removeEventListener('pointercancel',finish);
+        if(raf){cancelAnimationFrame(raf);raf=0}
+        draw(nextEvent.clientX,nextEvent.clientY);
+        const moved=Math.abs(deltaX)+Math.abs(deltaY)>1;
+        for(const entry of startPositions){
+          entry.item.x=clamp(entry.x+deltaX/rect.width*100,0,100);
+          entry.item.y=clamp(entry.y+deltaY/rect.height*100,0,100);
+          if(entry.node)stylePiece(entry.node,entry.item);
+        }
+        if(moved)setDirty('Posição atualizada. Salve para publicar.');
+      };
+      window.addEventListener('pointermove',move);
+      window.addEventListener('pointerup',finish,{once:true});
+      window.addEventListener('pointercancel',finish,{once:true});
+    }
+    function startResize(event,item,node){
+      const startX=event.clientX,startWidth=item.w,rect=stage.getBoundingClientRect();
+      let raf=0,lastX=startX,nextWidth=startWidth;
+      const draw=clientX=>{nextWidth=clamp(startWidth+(clientX-startX)/rect.width*100,5,100);node.style.setProperty('--w',nextWidth+'%')};
+      const move=nextEvent=>{lastX=nextEvent.clientX;if(!raf)raf=requestAnimationFrame(()=>{raf=0;draw(lastX)})};
+      const finish=nextEvent=>{
+        window.removeEventListener('pointermove',move);window.removeEventListener('pointerup',finish);window.removeEventListener('pointercancel',finish);
+        if(raf){cancelAnimationFrame(raf);raf=0}
+        draw(nextEvent.clientX);item.w=nextWidth;node.style.setProperty('--w',item.w+'%');setDirty('Tamanho atualizado. Salve para publicar.');
+      };
+      window.addEventListener('pointermove',move);window.addEventListener('pointerup',finish,{once:true});window.addEventListener('pointercancel',finish,{once:true});
+    }
+    function refreshUser(session){
+      const candidate=session?.user||null;
+      const owner=candidate?.email?.toLowerCase()===OWNER_EMAIL;
+      user=owner?candidate:null;
+      toolbar.classList.toggle('visible',owner);
+      login.classList.toggle('visible',!owner);
+      $('#hint').textContent=owner?'Arraste para mover. Shift+clique seleciona vários itens.':'Entre para editar o portfólio.';
+      syncButtons();
+      if(!owner&&!elements.length)say('');
     }
     async function load(){
-      if(!isReady){say('Configure a conexão do Supabase para publicar o ateliê.');return}
       const {data,error}=await client.from('studio_canvas').select('elements').eq('id',1).maybeSingle();
-      if(error){say('Não foi possível carregar o ateliê. Confira a configuração.');return}
-      elements=Array.isArray(data?.elements)?data.elements:[];render();say(elements.length?'':'Ainda não há imagens ou textos publicados.');
-    }
-    async function refreshUser(session){
-      const candidate=session?.user||null;const owner=candidate?.email?.toLowerCase()===OWNER_EMAIL;user=owner?candidate:null;
-      toolbar.classList.toggle('visible',owner);loginPanel.classList.toggle('visible',!owner);
-      $('#hint').textContent=owner?'Arraste para posicionar. Redimensione pela alça, edite textos com duplo clique e salve quando terminar.':'Faça login para adicionar imagens e textos. O acesso de edição é privado.';
+      if(!error&&Array.isArray(data?.elements)){elements=data.elements}
       render();
+      if(error)say('Não foi possível carregar o portfólio.');
     }
     $('#signin').addEventListener('click',async()=>{
-      if(!isReady){say('A conexão do Supabase ainda precisa ser configurada.');return}
-      const email=$('#email').value.trim().toLowerCase();if(email!==OWNER_EMAIL){say('Este endereço não tem acesso de edição.');return}
-      say('Enviando link seguro…');const {error}=await client.auth.signInWithOtp({email,options:{shouldCreateUser:false,emailRedirectTo:new URL('atelier.html',location.href).href}});say(error?safeError(error):'Confira seu e-mail para entrar no ateliê.');
+      const email=$('#email').value.trim().toLowerCase();
+      if(email!==OWNER_EMAIL){say('Este e-mail não tem acesso de edição.');return}
+      say('Enviando link de acesso…');
+      const {error}=await client.auth.signInWithOtp({email,options:{shouldCreateUser:false,emailRedirectTo:new URL('atelier.html',location.href).href}});
+      say(error?error.message:'Confira seu e-mail para entrar.');
     });
-    $('#image-input').addEventListener('change',async(event)=>{
-      if(!user)return;const files=[...event.target.files];
-      for(const file of files){if(!file.type.startsWith('image/'))continue;say('Enviando '+file.name+'…');const path=crypto.randomUUID()+'-'+file.name.replace(/[^a-zA-Z0-9._-]/g,'-');
-        const {error}=await client.storage.from(BUCKET).upload(path,file,{cacheControl:'31536000',upsert:false});if(error){say(safeError(error));continue}
-        const {data}=client.storage.from(BUCKET).getPublicUrl(path);elements.push({id:crypto.randomUUID(),type:'image',src:data.publicUrl,alt:file.name.replace(/\.[^.]+$/,''),x:50,y:50,w:36,z:elements.length+1});dirty=true;render();say('Imagem adicionada. Salve para publicar as alterações.');
-      }event.target.value='';
+    $('#image-input').addEventListener('change',async event=>{
+      if(!user)return;
+      const files=[...event.target.files].filter(file=>file.type.startsWith('image/'));
+      event.target.value='';
+      if(!files.length)return;
+      say('Enviando '+files.length+' imagem(ns)…');
+      const results=new Array(files.length);let next=0;
+      async function worker(){
+        while(true){
+          const index=next++;if(index>=files.length)return;
+          const file=files[index],path=crypto.randomUUID()+'-'+file.name.replace(/[^a-zA-Z0-9._-]/g,'-');
+          const {error}=await client.storage.from(BUCKET).upload(path,file,{cacheControl:'31536000',upsert:false});
+          if(error)results[index]={error};
+          else{const publicUrl=client.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;results[index]={src:publicUrl,alt:file.name.replace(/\.[^.]+$/,'')}}
+        }
+      }
+      await Promise.all(Array.from({length:Math.min(3,files.length)},worker));
+      let topZ=Math.max(0,...elements.map(item=>item.z)),added=0,failed=0;
+      const successful=results.filter(result=>result&&!result.error).length;
+      let offsetIndex=0;
+      for(const result of results){
+        if(!result||result.error){failed++;continue}
+        const offset=(offsetIndex++-(successful-1)/2)*3;
+        const item={id:crypto.randomUUID(),type:'image',src:result.src,alt:result.alt,x:clamp(50+offset,8,92),y:clamp(50+offset,8,92),w:36,z:++topZ};
+        elements.push(item);selectedIds.add(item.id);stage.append(createPiece(item));added++;
+      }
+      if(added)setDirty(added+' imagem(ns) adicionada(s). Salve para publicar.'+(failed?' '+failed+' falhou/falharam.':''));
+      else say('Não foi possível enviar as imagens selecionadas.');
+      syncSelection();
     });
-    $('#add-text').addEventListener('click',()=>{const text=prompt('Texto para adicionar ao ateliê:');if(text===null)return;const item={id:crypto.randomUUID(),type:'text',text,x:50,y:50,w:34,z:elements.length+1};elements.push(item);selected=item.id;dirty=true;render();stage.querySelector(`[data-id="${item.id}"]`)?.focus()});
-    $('#delete').addEventListener('click',()=>{elements=elements.filter(item=>item.id!==selected);selected=null;dirty=true;render()});
-    $('#front').addEventListener('click',()=>{const item=elements.find(v=>v.id===selected);if(item){item.z=Math.max(0,...elements.map(v=>v.z))+1;dirty=true;render()}});
-    $('#backward').addEventListener('click',()=>{const item=elements.find(v=>v.id===selected);if(item){item.z=Math.min(0,...elements.map(v=>v.z))-1;dirty=true;render()}});
-    $('#save').addEventListener('click',async()=>{if(!user)return;say('Salvando…');const {error}=await client.from('studio_canvas').upsert({id:1,elements,updated_at:new Date().toISOString()});if(error){say(safeError(error));return}dirty=false;render();say('Alterações salvas e publicadas.')});
-    $('#signout').addEventListener('click',async()=>{await client.auth.signOut();say('Você saiu do ateliê.')});
-    stage.addEventListener('pointerdown',event=>{if(event.target===stage){selected=null;render()}});
-    if(!isReady){say('O ateliê está aguardando a configuração do Supabase.');$('#login').classList.remove('visible')}
-    else {client.auth.onAuthStateChange((_event,session)=>{refreshUser(session)});const {data}=await client.auth.getSession();await refreshUser(data.session);await load()}
+    $('#add-text').addEventListener('click',()=>{
+      if(!user)return;
+      const text=prompt('Texto para o portfólio:','Seu texto');
+      if(text===null||!text.trim())return;
+      const item={id:crypto.randomUUID(),type:'text',text:text.trim(),x:50,y:50,w:34,z:Math.max(0,...elements.map(entry=>entry.z))+1};
+      elements.push(item);selectedIds=new Set([item.id]);stage.append(createPiece(item));setDirty('Texto adicionado. Salve para publicar.');syncSelection();
+    });
+    $('#edit-text').addEventListener('click',()=>{
+      const item=elements.find(entry=>selectedIds.has(entry.id));
+      if(!item||item.type!=='text')return;
+      const updated=prompt('Editar texto:',item.text);
+      if(updated===null)return;item.text=updated;const node=nodes.get(item.id);if(node)node.firstChild.textContent=updated;setDirty('Texto atualizado. Salve para publicar.');
+    });
+    $('#view-image').addEventListener('click',()=>{const item=elements.find(entry=>selectedIds.has(entry.id));if(item?.type==='image')openLightbox(item)});
+    $('#delete').addEventListener('click',()=>{
+      if(!selectedIds.size)return;
+      for(const id of selectedIds){nodes.get(id)?.remove();nodes.delete(id)}
+      elements=elements.filter(item=>!selectedIds.has(item.id));selectedIds.clear();setDirty('Seleção removida. Salve para publicar.');syncSelection();
+    });
+    $('#front').addEventListener('click',()=>{
+      const chosen=elements.filter(item=>selectedIds.has(item.id)).sort((a,b)=>a.z-b.z);
+      let z=Math.max(0,...elements.map(item=>item.z))+1;
+      for(const item of chosen){item.z=z++;nodes.get(item.id)?.style.setProperty('--z',item.z)}
+      if(chosen.length)setDirty('Camada atualizada. Salve para publicar.');
+    });
+    $('#backward').addEventListener('click',()=>{
+      const chosen=elements.filter(item=>selectedIds.has(item.id)).sort((a,b)=>a.z-b.z);
+      let z=Math.min(0,...elements.map(item=>item.z))-chosen.length;
+      for(const item of chosen){item.z=z++;nodes.get(item.id)?.style.setProperty('--z',item.z)}
+      if(chosen.length)setDirty('Camada atualizada. Salve para publicar.');
+    });
+    $('#save').addEventListener('click',async()=>{
+      if(!user||!dirty)return;
+      say('Salvando…');
+      const {error}=await client.from('studio_canvas').upsert({id:1,elements,updated_at:new Date().toISOString()});
+      if(error){say(error.message);return}
+      dirty=false;syncButtons();say('Portfólio salvo.');
+    });
+    $('#signout').addEventListener('click',async()=>{await client.auth.signOut();say('Sessão encerrada.')});
+    stage.addEventListener('pointerdown',event=>{if(event.target===stage){selectedIds.clear();syncSelection()}});
+    client.auth.onAuthStateChange((_event,session)=>refreshUser(session));
+    const {data:sessionData}=await client.auth.getSession();
+    refreshUser(sessionData.session);
+    await load();
   </script>
 </body>
 </html>
-
