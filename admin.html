@@ -31,7 +31,7 @@
     input[type=file]{display:none}
     #status{min-height:18px;color:var(--muted);font-size:12px;margin:0 0 10px}
     .login-row{margin-bottom:8px}
-    #composition{position:relative;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-content:start;column-gap:16px;row-gap:20px;width:100%;height:auto!important;min-height:var(--canvas-min-height,0px);aspect-ratio:auto;touch-action:none;container-type:inline-size}
+    #composition{position:relative;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-content:start;column-gap:16px;row-gap:20px;width:100%;height:auto!important;min-height:calc(var(--canvas-min-height,0px) + var(--canvas-extra-space,0px));padding-bottom:var(--canvas-extra-space,0px);aspect-ratio:auto;touch-action:none;container-type:inline-size}
     #composition.editor-grid{background-image:radial-gradient(circle,rgba(230,230,230,.2) 1px,transparent 1.4px);background-size:16px 16px;background-position:0 0}
     #composition.drop-active::after{content:'Solte para adicionar';position:absolute;inset:0;z-index:100;display:grid;place-items:center;border:1px dashed var(--accent);border-radius:10px;background:rgba(35,35,35,.88);color:var(--ink);font-size:clamp(18px,3vw,28px);pointer-events:none}
     .piece{position:absolute;left:var(--x);top:var(--y);width:var(--w);z-index:var(--z);transform:translate(-50%,-50%);user-select:none}
@@ -169,7 +169,7 @@
       const range=document.createRange();range.selectNodeContents(content);range.collapse(false);
       const selection=window.getSelection();selection.removeAllRanges();selection.addRange(range);
     }
-    function updateStageHeight(){const height=stage.clientWidth*2/3+extraSpace*(stage.clientWidth/1160);stage.style.setProperty('--canvas-min-height',height+'px');stage.style.height=height+'px'}
+    function updateStageHeight(){const base=stage.clientWidth*2/3,extra=extraSpace*(stage.clientWidth/1160);stage.style.setProperty('--canvas-min-height',base+'px');stage.style.setProperty('--canvas-extra-space',extra+'px');stage.style.height=(base+extra)+'px'}
     new ResizeObserver(updateStageHeight).observe(stage);
     function render(){
       nodes.clear();stage.replaceChildren();updateStageHeight();
@@ -417,7 +417,7 @@
       toolbar.classList.toggle('visible',owner);
       login.classList.toggle('visible',!owner);
       stage.classList.toggle('editor-grid',owner);
-      $('#hint').textContent=owner?'Solte imagens ou links na prévia para adicioná-los. Clique repetidamente em itens sobrepostos para alternar a seleção. Arraste no espaço vazio para selecionar vários; Shift+clique adiciona à seleção. Movimento e redimensionamento alinham aos pontos do grid; segure Ctrl para ignorá-lo. Na caixa de texto, dê duplo clique para editar; a alça lateral ajusta a largura e a inferior o tamanho da fonte. Ctrl+C/Ctrl+V copia e cola caixas selecionadas.':'Entre para editar o portfólio.';
+      $('#hint').textContent=owner?'Solte imagens ou links para adicioná-los ao final. Arraste uma imagem entre os cartões para reorganizar; Shift+clique seleciona vários itens. Dê duplo clique no texto para editar. Segure Ctrl ao redimensionar para sair do grid.':'Entre para editar o portfólio.';
       syncButtons();
       if(!owner&&!elements.length)say('');
     }
