@@ -57,7 +57,7 @@
     <section id="composition" aria-label="Prévia do portfólio"></section>
     <p id="hint">Entre para editar. Arraste elementos; Shift+clique seleciona vários. Arraste a alça para redimensionar e use “Ver imagem” para abrir uma imagem inteira.</p>
   </main>
-  <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Imagem em tamanho cheio" hidden><img id="lightbox-image" alt=""></div>
+  <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Imagem em tamanho cheio" hidden><img id="lightbox-image" alt="" draggable="true"></div>
   <script type="module">
     import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.119.0';
     const SUPABASE_URL='https://sdchkvhzzcmpyszqtxlw.supabase.co';
@@ -73,7 +73,7 @@
     const clamp=(value,min,max)=>Math.max(min,Math.min(max,value));
 
     function closeLightbox(){lightbox.hidden=true;lightboxImage.removeAttribute('src');document.body.style.overflow=''}
-    function openLightbox(item){lightboxImage.src=item.src;lightboxImage.alt=item.alt||'';lightbox.hidden=false;document.body.style.overflow='hidden'}
+    function openLightbox(item){lightboxImage.src=item.src;lightboxImage.alt=item.alt||'';lightboxImage.draggable=true;lightbox.hidden=false;document.body.style.overflow='hidden'}
     lightbox.addEventListener('click',event=>{if(event.target===lightbox)closeLightbox()});
     window.addEventListener('keydown',event=>{if(event.key==='Escape'&&!lightbox.hidden)closeLightbox()});
 
