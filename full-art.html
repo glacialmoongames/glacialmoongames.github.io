@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#232323">
+  <title>Full Art — Glacial Moon Games</title>
+  <link rel="icon" type="image/png" href="logoaba.png">
+  <style>
+    *{box-sizing:border-box}
+    html,body{min-height:100%;margin:0}
+    body{background:#232323;color:#e6e6e6;font-family:Arial,Helvetica,sans-serif;text-align:center}
+    header{padding:34px 20px 26px}
+    .masthead{display:flex;align-items:center;justify-content:center;gap:20px;width:max-content;max-width:100%;margin:0 auto}
+    .logo{display:block;width:170px;max-width:48vw;height:auto}
+    h1{margin:0;font-size:28px;font-weight:700;white-space:nowrap}
+    .canvas-tabs{display:flex;justify-content:center;gap:0;flex-wrap:wrap;margin:0 auto 22px}
+    .canvas-tabs a{min-width:0;padding:8px 16px;border:0;border-radius:0;color:#aaa;font-size:13px;letter-spacing:.08em;text-decoration:none}
+    .canvas-tabs a+a{border-left:1px solid #666}
+    .canvas-tabs a.active{color:#f47b20;font-weight:700}
+    main{width:min(1160px,calc(100% - 40px));margin:0 auto 50px}
+    #composition{position:relative;width:100%;height:auto;aspect-ratio:auto;container-type:inline-size}
+    .piece{position:absolute;left:var(--x);top:var(--y);width:var(--w);z-index:var(--z);transform:translate(-50%,-50%)}
+    .piece img{display:block;width:100%;height:auto;border-radius:7px;cursor:zoom-in}
+    .piece.text{color:#e6e6e6;font-family:Arial,Helvetica,sans-serif;font-size:var(--font-size,clamp(15px,calc(var(--font-scale,2.1)*1cqw),100px));line-height:1.25;white-space:pre-wrap;overflow-wrap:anywhere}
+    .lightbox{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(0,0,0,.92);cursor:zoom-out}
+    .lightbox[hidden]{display:none}
+    .lightbox img{display:block;max-width:min(96vw,1800px);max-height:94vh;width:auto;height:auto;object-fit:contain;border-radius:7px;cursor:default}
+    @media(max-width:600px){header{padding:27px 14px 22px}.masthead{gap:12px}.logo{width:110px}h1{font-size:24px}.canvas-tabs{justify-content:flex-start;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin-bottom:18px}.canvas-tabs::-webkit-scrollbar{display:none}.canvas-tabs a{flex:0 0 auto;padding:8px 10px;font-size:11px;white-space:nowrap}main{width:calc(100% - 28px)}}
+  </style>
+</head>
+<body>
+  <header><div class="masthead"><img class="logo" src="logo.png" alt="Glacial Moon Games"><h1>Portfólio</h1></div></header>
+  <nav class="canvas-tabs" aria-label="Portfólios">
+    <a href="portfolio.html" data-tab-en="ICONS" data-tab-pt="ÍCONES">ICONS</a>
+    <a href="full-body.html" data-tab-en="FULL BODY" data-tab-pt="CORPO INTEIRO">FULL BODY</a>
+    <a class="active" href="full-art.html" aria-current="page" data-tab-en="FULL ART" data-tab-pt="ARTE COMPLETA">FULL ART</a>
+    <a href="character-sheets.html" data-tab-en="CHARACTER SHEETS" data-tab-pt="FICHAS DE PERSONAGEM">CHARACTER SHEETS</a>
+    <a href="personagens.html" data-tab-en="CHARACTERS" data-tab-pt="PERSONAGENS">PERSONAGENS</a>
+  </nav>
+  <main><section id="composition" aria-label="Portfólio"></section></main>
+  <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Imagem em tamanho cheio" hidden><img id="lightbox-image" alt="" draggable="true"></div>
+  <script type="module">
+    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.119.0';
+    const preferredLanguage=(navigator.languages&&navigator.languages[0])||navigator.language||'en';
+    const usePortuguese=/^pt(?:-|$)/i.test(preferredLanguage);
+    document.documentElement.lang=usePortuguese?'pt-BR':'en';
+    document.title=usePortuguese?'Arte Completa — Glacial Moon Games':'Full Art — Glacial Moon Games';
+    for(const tab of document.querySelectorAll('[data-tab-en]'))tab.textContent=usePortuguese?tab.dataset.tabPt:tab.dataset.tabEn;
+    const client=createClient('https://sdchkvhzzcmpyszqtxlw.supabase.co','sb_publishable_hlQm6wS9WnADEVupUCqQ8Q_ulClFteW');
+    const stage=document.getElementById('composition');
+    const lightbox=document.getElementById('lightbox');
+    const lightboxImage=document.getElementById('lightbox-image');
+    function closeLightbox(){lightbox.hidden=true;lightboxImage.removeAttribute('src');document.body.style.overflow=''}
+    lightbox.addEventListener('click',event=>{if(event.target===lightbox)closeLightbox()});
+    window.addEventListener('keydown',event=>{if(event.key==='Escape'&&!lightbox.hidden)closeLightbox()});
+    const {data}=await client.from('studio_canvas').select('elements').eq('id',4).maybeSingle();
+    const saved=Array.isArray(data?.elements)?data.elements:[];
+    const space=saved.find(item=>item.type==='__canvas_space');
+    const extraSpace=Number.isFinite(space?.height)?Math.max(0,space.height):0;
+    const updateStageHeight=()=>{stage.style.height=(stage.clientWidth*2/3+extraSpace)+'px'};
+    new ResizeObserver(updateStageHeight).observe(stage);
+    updateStageHeight();
+    for(const item of saved){
+      if(item.type==='__canvas_space')continue;
+      const piece=document.createElement('div');
+      piece.className='piece'+(item.type==='text'?' text':'');
+      piece.style.setProperty('--x',item.x+'%');
+      piece.style.setProperty('--y',item.y+'%');
+      piece.style.setProperty('--w',item.w+'%');
+      piece.style.setProperty('--font-scale',(item.fontScale||2.1));
+      if(Number.isFinite(item.fontSize))piece.style.setProperty('--font-size',item.fontSize+'px');
+      piece.style.setProperty('--z',item.z);
+      if(item.type==='image'){
+        const img=document.createElement('img');
+        img.src=item.previewSrc||item.src;img.alt=item.alt||'';img.loading='lazy';img.decoding='async';img.fetchPriority='low';img.draggable=true;
+        img.addEventListener('click',()=>{lightboxImage.src=item.src;lightboxImage.alt=item.alt||'';lightbox.hidden=false;document.body.style.overflow='hidden'});
+        piece.append(img);
+      }else if(item.type==='text'){
+        piece.textContent=item.text||'';
+      }
+      stage.append(piece);
+    }
+  </script>
+</body>
+</html>
