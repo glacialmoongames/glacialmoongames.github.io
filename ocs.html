@@ -15,8 +15,9 @@
     .logo{display:block;width:170px;max-width:48vw;height:auto}
     h1{margin:0;font-size:28px;font-weight:700;white-space:nowrap}
     .canvas-tabs{display:flex;justify-content:center;gap:8px;margin:0 auto 22px}
-    .canvas-tabs a{min-width:112px;padding:8px 18px;border:1px solid #4a4a4a;border-radius:8px;color:#e6e6e6;font-size:13px;letter-spacing:.08em}
-    .canvas-tabs a.active{border-color:#f47b20;color:#f47b20}
+    .canvas-tabs a{min-width:0;padding:8px 16px;border:0;border-radius:0;color:#aaa;font-size:13px;letter-spacing:.08em}
+    .canvas-tabs a+a{border-left:1px solid #666}
+    .canvas-tabs a.active{color:#f47b20;font-weight:700}
     main{width:min(1160px,calc(100% - 40px));margin:0 auto 50px}
     #composition{position:relative;width:100%;height:auto;aspect-ratio:auto;container-type:inline-size}
     .piece{position:absolute;left:var(--x);top:var(--y);width:var(--w);z-index:var(--z);transform:translate(-50%,-50%)}
@@ -25,12 +26,12 @@
     .lightbox{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(0,0,0,.92);cursor:zoom-out}
     .lightbox[hidden]{display:none}
     .lightbox img{display:block;max-width:min(96vw,1800px);max-height:94vh;width:auto;height:auto;object-fit:contain;border-radius:7px;cursor:default}
-    @media(max-width:600px){header{padding:27px 14px 22px}.masthead{gap:12px}.logo{width:110px}h1{font-size:24px}.canvas-tabs{margin-bottom:18px}.canvas-tabs a{min-width:100px;padding:8px 12px}main{width:calc(100% - 28px)}}
+    @media(max-width:600px){header{padding:27px 14px 22px}.masthead{gap:12px}.logo{width:110px}h1{font-size:24px}.canvas-tabs{margin-bottom:18px}.canvas-tabs a{padding:8px 10px;font-size:11px}main{width:calc(100% - 28px)}}
   </style>
 </head>
 <body>
   <header><div class="masthead"><img class="logo" src="logo.png" alt="Glacial Moon Games"><h1>Portfólio</h1></div></header>
-  <nav class="canvas-tabs" aria-label="Portfólios"><a href="portfolio.html">ESTILOS</a><a class="active" href="ocs.html" aria-current="page">OC's</a></nav>
+  <nav class="canvas-tabs" aria-label="Portfólios"><a href="portfolio.html">ESTILOS / STYLES</a><a class="active" href="ocs.html" aria-current="page">PERSONAGENS / CHARACTERS</a></nav>
   <main><section id="composition" aria-label="Portfólio"></section></main>
   <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Imagem em tamanho cheio" hidden><img id="lightbox-image" alt="" draggable="true"></div>
   <script type="module">
