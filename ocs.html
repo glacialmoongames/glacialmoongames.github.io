@@ -31,11 +31,15 @@
 </head>
 <body>
   <header><div class="masthead"><img class="logo" src="logo.png" alt="Glacial Moon Games"><h1>Portfólio</h1></div></header>
-  <nav class="canvas-tabs" aria-label="Portfólios"><a href="portfolio.html">ESTILOS / STYLES</a><a class="active" href="ocs.html" aria-current="page">PERSONAGENS / CHARACTERS</a></nav>
+  <nav class="canvas-tabs" aria-label="Portfólios"><a href="portfolio.html" data-tab-en="STYLES" data-tab-pt="ESTILOS">ESTILOS</a><a class="active" href="ocs.html" aria-current="page" data-tab-en="CHARACTERS" data-tab-pt="PERSONAGENS">PERSONAGENS</a></nav>
   <main><section id="composition" aria-label="Portfólio"></section></main>
   <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Imagem em tamanho cheio" hidden><img id="lightbox-image" alt="" draggable="true"></div>
   <script type="module">
     import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.119.0';
+    const preferredLanguage=(navigator.languages&&navigator.languages[0])||navigator.language||'en';
+    const usePortuguese=/^pt(?:-|$)/i.test(preferredLanguage);
+    document.documentElement.lang=usePortuguese?'pt-BR':'en';
+    for(const tab of document.querySelectorAll('[data-tab-en]'))tab.textContent=usePortuguese?tab.dataset.tabPt:tab.dataset.tabEn;
     const client=createClient('https://sdchkvhzzcmpyszqtxlw.supabase.co','sb_publishable_hlQm6wS9WnADEVupUCqQ8Q_ulClFteW');
     const stage=document.getElementById('composition');
     const lightbox=document.getElementById('lightbox');
