@@ -27,6 +27,7 @@
     #status{min-height:18px;color:var(--muted);font-size:12px;margin:0 0 10px}
     .login-row{margin-bottom:8px}
     #composition{position:relative;width:100%;aspect-ratio:3/2;touch-action:none}
+    #composition.drop-active::after{content:'Solte para adicionar';position:absolute;inset:0;z-index:100;display:grid;place-items:center;border:1px dashed var(--accent);border-radius:10px;background:rgba(35,35,35,.88);color:var(--ink);font-size:clamp(18px,3vw,28px);pointer-events:none}
     .piece{position:absolute;left:var(--x);top:var(--y);width:var(--w);z-index:var(--z);transform:translate(-50%,-50%);user-select:none}
     .piece img{display:block;width:100%;height:auto;border-radius:7px;pointer-events:none;user-select:none}
     .piece.text{color:#e6e6e6;font-size:clamp(15px,2.1vw,30px);line-height:1.25;white-space:pre-wrap;overflow-wrap:anywhere}
@@ -204,11 +205,10 @@
       const {error}=await client.auth.signInWithOtp({email,options:{shouldCreateUser:false,emailRedirectTo:new URL('atelier.html',location.href).href}});
       say(error?error.message:'Confira seu e-mail para entrar.');
     });
-    $('#image-input').addEventListener('change',async event=>{
-      if(!user)return;
-      const files=[...event.target.files].filter(file=>file.type.startsWith('image/'));
-      event.target.value='';
-      if(!files.length)return;
+    async function uploadImages(inputFiles){
+      if(!user){say('Entre antes de adicionar imagens.');return}
+      const files=[...inputFiles].filter(file=>file&&file.type.startsWith('image/'));
+      if(!files.length){say('Arraste arquivos de imagem para a prévia.');return}
       say('Enviando '+files.length+' imagem(ns)…');
       const results=new Array(files.length);let next=0;
       async function worker(){
@@ -217,7 +217,7 @@
           const file=files[index],path=crypto.randomUUID()+'-'+file.name.replace(/[^a-zA-Z0-9._-]/g,'-');
           const {error}=await client.storage.from(BUCKET).upload(path,file,{cacheControl:'31536000',upsert:false});
           if(error)results[index]={error};
-          else{const publicUrl=client.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;results[index]={src:publicUrl,alt:file.name.replace(/\.[^.]+$/,'')}}
+          else{const publicUrl=client.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;results[index]={src:publicUrl,alt:file.name.replace(/\\.[^.]+$/,'')}}
         }
       }
       await Promise.all(Array.from({length:Math.min(3,files.length)},worker));
@@ -233,6 +233,53 @@
       if(added)setDirty(added+' imagem(ns) adicionada(s). Salve para publicar.'+(failed?' '+failed+' falhou/falharam.':''));
       else say('Não foi possível enviar as imagens selecionadas.');
       syncSelection();
+    }
+    async function uploadImageUrl(value){
+      try{
+        const source=new URL(value);
+        if(source.protocol!=='https:')throw new Error('URL inválida');
+        const response=await fetch(source.href,{mode:'cors'});
+        if(!response.ok)throw new Error('download indisponível');
+        const blob=await response.blob();
+        if(!blob.type.startsWith('image/'))throw new Error('conteúdo não é imagem');
+        const rawName=decodeURIComponent(source.pathname.split('/').pop()||'');
+        const name=rawName.includes('.')?rawName:'imagem.'+(blob.type.split('/')[1]||'png').replace('jpeg','jpg');
+        await uploadImages([new File([blob],name,{type:blob.type})]);
+      }catch{
+        say('Esse site não permite copiar a imagem direto. Baixe o arquivo e arraste-o para a prévia.');
+      }
+    }
+    $('#image-input').addEventListener('change',async event=>{
+      const files=[...event.target.files];event.target.value='';await uploadImages(files);
+    });
+    let dragDepth=0;
+    function hasImageTransfer(event){
+      const types=Array.from(event.dataTransfer?.types||[]);
+      return types.includes('Files')||types.includes('text/uri-list');
+    }
+    stage.addEventListener('dragenter',event=>{
+      if(!hasImageTransfer(event))return;
+      event.preventDefault();dragDepth++;stage.classList.add('drop-active');
+    });
+    stage.addEventListener('dragover',event=>{
+      if(!hasImageTransfer(event))return;
+      event.preventDefault();if(event.dataTransfer)event.dataTransfer.dropEffect='copy';
+    });
+    stage.addEventListener('dragleave',event=>{
+      if(!hasImageTransfer(event))return;
+      event.preventDefault();dragDepth=Math.max(0,dragDepth-1);
+      if(!dragDepth)stage.classList.remove('drop-active');
+    });
+    stage.addEventListener('drop',async event=>{
+      const transfer=event.dataTransfer;
+      if(!transfer)return;
+      const files=[...transfer.files].filter(file=>file.type.startsWith('image/'));
+      const uri=transfer.getData('text/uri-list').split(/\\r?\\n/).find(line=>line.trim()&&!line.startsWith('#'));
+      if(!files.length&&!uri&&!hasImageTransfer(event))return;
+      event.preventDefault();dragDepth=0;stage.classList.remove('drop-active');
+      if(files.length){await uploadImages(files);return}
+      if(uri){await uploadImageUrl(uri);return}
+      say('Arraste arquivos de imagem para a prévia.');
     });
     $('#add-text').addEventListener('click',()=>{
       if(!user)return;
