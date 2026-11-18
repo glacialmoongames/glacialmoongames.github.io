@@ -69,6 +69,7 @@
     const stage=$('#composition'),status=$('#status'),toolbar=$('#toolbar'),login=$('#login');
     const lightbox=$('#lightbox'),lightboxImage=$('#lightbox-image');
     let elements=[],selectedIds=new Set(),nodes=new Map(),user=null,dirty=false;
+    let overlapCycle={x:NaN,y:NaN,index:0,ids:[]};
     const say=message=>{status.textContent=message};
     const clamp=(value,min,max)=>Math.max(min,Math.min(max,value));
 
@@ -129,6 +130,22 @@
         event.preventDefault();event.stopPropagation();
         selectedIds=new Set([item.id]);syncSelection();
         startResize(event,item,node);return;
+      }
+      const hitIds=elements
+        .filter(entry=>{
+          const rect=nodes.get(entry.id)?.getBoundingClientRect();
+          return rect&&event.clientX>=rect.left&&event.clientX<=rect.right&&event.clientY>=rect.top&&event.clientY<=rect.bottom;
+        })
+        .sort((a,b)=>a.z-b.z)
+        .map(entry=>entry.id);
+      if(hitIds.length>1){
+        const sameSpot=Math.abs(event.clientX-overlapCycle.x)<5&&Math.abs(event.clientY-overlapCycle.y)<5&&hitIds.join('|')===overlapCycle.ids.join('|');
+        overlapCycle={x:event.clientX,y:event.clientY,index:sameSpot?(overlapCycle.index+1)%hitIds.length:0,ids:hitIds};
+        const targetId=hitIds[hitIds.length-1-overlapCycle.index];
+        item=elements.find(entry=>entry.id===targetId)||item;
+        node=nodes.get(item.id)||node;
+      }else{
+        overlapCycle={x:NaN,y:NaN,index:0,ids:[]};
       }
       const multi=event.shiftKey||event.ctrlKey||event.metaKey;
       if(multi){
