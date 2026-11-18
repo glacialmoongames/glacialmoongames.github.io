@@ -15,7 +15,7 @@
     .logo{display:block;width:170px;max-width:48vw;height:auto}
     h1{margin:0;font-size:28px;font-weight:700;white-space:nowrap}
     main{width:min(1160px,calc(100% - 40px));margin:0 auto 48px}
-    .canvas-tabs{position:sticky;top:8px;z-index:900;display:flex;justify-content:center;gap:8px;margin:0 auto 16px;padding:8px 0;background:linear-gradient(var(--bg) 78%,rgba(35,35,35,0));}
+    .canvas-tabs{position:sticky;top:8px;z-index:900;display:flex;justify-content:center;gap:0;flex-wrap:wrap;margin:0 auto 16px;padding:8px 0;background:linear-gradient(var(--bg) 78%,rgba(35,35,35,0));}
     .canvas-tabs button{min-width:0;padding:8px 16px;border:0;border-radius:0;background:transparent;color:var(--muted);letter-spacing:.08em}
     .canvas-tabs button:hover{border-color:transparent;background:transparent;color:var(--ink)}
     .canvas-tabs button+button{border-left:1px solid #666}
@@ -49,14 +49,17 @@
     .lightbox{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(0,0,0,.92);cursor:zoom-out}
     .lightbox[hidden]{display:none}.lightbox img{display:block;max-width:min(96vw,1800px);max-height:94vh;width:auto;height:auto;object-fit:contain;border-radius:7px;cursor:default}
     #hint{color:#777;font-size:12px;margin:8px auto 0}
-    @media(max-width:700px){header{padding:27px 14px 22px}.masthead{gap:12px}.logo{width:110px}h1{font-size:24px}main{width:calc(100% - 28px)}.toolbar,.login-row{gap:6px;margin-bottom:12px}button,.button{padding:8px 9px;font-size:12px}.canvas-tabs button{padding:8px 12px}input[type=email]{width:min(250px,60vw)}}
+    @media(max-width:700px){header{padding:27px 14px 22px}.masthead{gap:12px}.logo{width:110px}h1{font-size:24px}main{width:calc(100% - 28px)}.toolbar,.login-row{gap:6px;margin-bottom:12px}button,.button{padding:8px 9px;font-size:12px}.canvas-tabs{justify-content:flex-start;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}.canvas-tabs::-webkit-scrollbar{display:none}.canvas-tabs button{flex:0 0 auto;padding:8px 12px;white-space:nowrap}input[type=email]{width:min(250px,60vw)}}
   </style>
 </head>
 <body>
   <header><div class="masthead"><img class="logo" src="logo.png" alt="Glacial Moon Games"><h1>Portfólio</h1></div></header>
   <main>
     <nav id="canvas-tabs" class="canvas-tabs" aria-label="Portfólios">
-      <button type="button" class="canvas-tab active" data-canvas-id="1" data-tab-en="STYLES" data-tab-pt="ESTILOS" aria-pressed="true">ESTILOS</button>
+      <button type="button" class="canvas-tab active" data-canvas-id="1" data-tab-en="ICON'S" data-tab-pt="ICON'S" aria-pressed="true">ICON'S</button>
+      <button type="button" class="canvas-tab" data-canvas-id="3" data-tab-en="FULL BODY" data-tab-pt="FULL BODY" aria-pressed="false">FULL BODY</button>
+      <button type="button" class="canvas-tab" data-canvas-id="4" data-tab-en="FULL ART" data-tab-pt="FULL ART" aria-pressed="false">FULL ART</button>
+      <button type="button" class="canvas-tab" data-canvas-id="5" data-tab-en="CHARACTER SHEETS" data-tab-pt="CHARACTER SHEETS" aria-pressed="false">CHARACTER SHEETS</button>
       <button type="button" class="canvas-tab" data-canvas-id="2" data-tab-en="CHARACTERS" data-tab-pt="PERSONAGENS" aria-pressed="false">PERSONAGENS</button>
     </nav>
     <div id="login" class="login-row">
