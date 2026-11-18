@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#232323">
+  <title>Administração do portfólio — Glacial Moon Games</title>
+  <style>
+    :root{color-scheme:dark;--bg:#232323;--panel:#2d2d2d;--ink:#e6e6e6;--muted:#aaa;--accent:#f47b20;--line:#494949}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px Arial,Helvetica,sans-serif;min-height:100vh}
+    header{max-width:1160px;margin:auto;padding:34px 24px 24px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+    .brand{color:var(--ink);font-size:13px;letter-spacing:.17em;text-transform:uppercase}.brand span{color:var(--accent)}
+    .back{color:var(--muted);text-decoration:none;font-size:14px}.back:hover{color:white}
+    main{max-width:1160px;margin:0 auto;padding:28px 24px 70px}
+    .intro{display:flex;align-items:end;justify-content:space-between;gap:24px;margin-bottom:24px}
+    h1{font-size:clamp(30px,5vw,48px);margin:0 0 9px;letter-spacing:-.035em} .intro p{margin:0;color:var(--muted);line-height:1.6}
+    .status{font-size:13px;color:var(--muted);min-height:20px;text-align:right}
+    .toolbar{display:none;align-items:center;flex-wrap:wrap;gap:9px;padding:12px;margin-bottom:14px;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
+    .toolbar.visible{display:flex}button,.button{appearance:none;border:1px solid #5b5b5b;border-radius:8px;background:#393939;color:var(--ink);padding:10px 14px;font:inherit;font-size:14px;text-decoration:none;cursor:pointer;transition:.15s}
+    button:hover,.button:hover{border-color:#888;background:#414141}button.primary{background:var(--accent);border-color:var(--accent);color:#171717;font-weight:700}button.primary:hover{background:#ff9140}
+    button:disabled{opacity:.55;cursor:wait}.tool-spacer{flex:1}.login{display:flex;gap:8px;align-items:center}.login input{width:min(270px,55vw);padding:10px 12px;border:1px solid #555;border-radius:8px;background:#202020;color:var(--ink);font:inherit}
+    .canvas-shell{border:1px solid var(--line);border-radius:14px;padding:10px;background:#1d1d1d;box-shadow:0 18px 55px #0003}
+    #stage{position:relative;width:100%;aspect-ratio:3/2;overflow:hidden;border-radius:9px;background-color:#292929;background-image:radial-gradient(#ffffff0d 1px,transparent 1px);background-size:18px 18px;touch-action:none}
+    .element{position:absolute;left:var(--x);top:var(--y);width:var(--w);z-index:var(--z);transform:translate(-50%,-50%);touch-action:none;user-select:none}
+    .element img{display:block;width:100%;height:auto;border-radius:7px;pointer-events:none}
+    .element.text{color:#e6e6e6;font-size:clamp(14px,2.1vw,30px);line-height:1.25;white-space:pre-wrap;overflow-wrap:anywhere;text-shadow:0 2px 5px #0008;min-height:1.3em}
+    .element.selected{outline:1px dashed var(--accent);outline-offset:5px}.resize-handle{display:none;position:absolute;width:15px;height:15px;right:-8px;bottom:-8px;border:2px solid var(--bg);border-radius:50%;background:var(--accent);cursor:nwse-resize;touch-action:none}.selected .resize-handle{display:block}
+    .empty{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:24px;color:#858585;line-height:1.6;pointer-events:none}.empty strong{color:#bdbdbd;font-weight:500}
+    .hint{color:#888;font-size:12px;line-height:1.5;margin:12px 4px 0}.hidden{display:none!important}
+    @media(max-width:680px){header{padding:24px 18px 12px}main{padding:22px 14px 48px}.intro{display:block}.status{text-align:left;margin-top:12px}.canvas-shell{padding:6px;border-radius:11px}#stage{border-radius:7px}.toolbar{padding:9px;gap:7px}button,.button{padding:9px 11px;font-size:13px}.tool-spacer{display:none}.login{width:100%}.login input{flex:1}}
+  </style>
+</head>
+<body>
+  <header><a class="brand" href="portfolio.html">GLACIAL <span>MOON</span> GAMES</a><a class="back" href="portfolio.html">← Ver portfólio</a></header>
+  <main>
+    <section class="intro"><div><h1>Editar portfólio</h1><p>Área de administração.</p></div><div id="status" class="status" role="status" aria-live="polite">Carregando…</div></section>
+    <section id="toolbar" class="toolbar" aria-label="Ferramentas do ateliê">
+      <label class="button" for="image-input">Adicionar imagem</label><input class="hidden" id="image-input" type="file" accept="image/*" multiple>
+      <button id="add-text">Adicionar texto</button><button id="front">Trazer para frente</button><button id="backward">Enviar para trás</button><button id="delete">Remover</button>
+      <span class="tool-spacer"></span><button id="save" class="primary">Salvar alterações</button><button id="signout">Sair</button>
+    </section>
+    <section id="login" class="toolbar visible" aria-label="Acesso do artista">
+      <div class="login"><input id="email" type="email" autocomplete="email" placeholder="Seu e-mail" aria-label="E-mail"><button id="signin" class="primary">Enviar link de acesso</button></div>
+    </section>
+    <div class="canvas-shell"><div id="stage" aria-label="Tela do ateliê"><div id="empty" class="empty"><div><strong>As imagens e textos publicados aparecerão aqui.</strong><br>O acesso de edição é privado.</div></div></div></div>
+    <p id="hint" class="hint">Faça login para adicionar imagens e textos. Arraste os elementos para posicioná-los; use a alça no canto para redimensionar.</p>
+  </main>
+  <script type="module">
+    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+    // Preencher com a Project URL e a chave pública (anon/publishable) do Supabase.
+    const SUPABASE_URL = 'https://sdchkvhzzcmpyszqtxlw.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_hlQm6wS9WnADEVupUCqQ8Q_ulClFteW';
+    const OWNER_EMAIL = 'glacialmoongames@gmail.com';
+    const BUCKET = 'studio-art';
+    const isReady = !SUPABASE_URL.includes('COLE_A_') && !SUPABASE_ANON_KEY.includes('COLE_A_');
+    const client = isReady ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+    const $ = (s) => document.querySelector(s);
+    const stage = $('#stage'), status = $('#status'), toolbar = $('#toolbar'), loginPanel = $('#login');
+    let elements = [], selected = null, user = null, dirty = false;
+    const say = (message) => { status.textContent = message; };
+    const safeError = (error) => error?.message || 'Não foi possível concluir. Confira a conexão e tente novamente.';
+
+    function render(){
+      stage.querySelectorAll('.element').forEach(el=>el.remove());
+      $('#empty').classList.toggle('hidden', elements.length>0);
+      elements.forEach((item)=>{
+        const node=document.createElement('div'); node.className='element'+(item.type==='text'?' text':'')+(selected===item.id?' selected':'');
+        node.dataset.id=item.id; node.style.setProperty('--x',item.x+'%'); node.style.setProperty('--y',item.y+'%'); node.style.setProperty('--w',item.w+'%'); node.style.setProperty('--z',item.z);
+        if(item.type==='image'){const img=document.createElement('img');img.src=item.src;img.alt=item.alt||'';img.draggable=false;node.append(img)}
+        else {node.textContent=item.text||'Clique duas vezes para editar';node.contentEditable=!!user;node.spellcheck=true;node.addEventListener('input',()=>{item.text=node.textContent;dirty=true})}
+        const handle=document.createElement('span');handle.className='resize-handle';handle.setAttribute('aria-hidden','true');node.append(handle);
+        node.addEventListener('pointerdown',(event)=>startPointer(event,item,node));
+        node.addEventListener('dblclick',()=>{if(user&&item.type==='text'){node.focus();document.getSelection()?.selectAllChildren(node)}});
+        stage.append(node);
+      });
+      $('#delete').disabled=!selected; $('#front').disabled=!selected; $('#backward').disabled=!selected; $('#save').disabled=!user||!dirty;
+    }
+    function startPointer(event,item,node){
+      if(!user)return;
+      if(event.target===node.querySelector('.resize-handle')){event.preventDefault();event.stopPropagation();selected=item.id;const sx=event.clientX, start=item.w, rect=stage.getBoundingClientRect();
+        const move=e=>{item.w=Math.max(5,Math.min(100,start+(e.clientX-sx)/rect.width*100));node.style.setProperty('--w',item.w+'%');dirty=true};
+        const end=()=>{window.removeEventListener('pointermove',move);window.removeEventListener('pointerup',end);render()};window.addEventListener('pointermove',move);window.addEventListener('pointerup',end,{once:true});render();return;}
+      if(event.target.isContentEditable)return;
+      event.preventDefault();selected=item.id;const rect=stage.getBoundingClientRect(), sx=event.clientX,sy=event.clientY,ox=item.x,oy=item.y;
+      const move=e=>{item.x=Math.max(0,Math.min(100,ox+(e.clientX-sx)/rect.width*100));item.y=Math.max(0,Math.min(100,oy+(e.clientY-sy)/rect.height*100));node.style.setProperty('--x',item.x+'%');node.style.setProperty('--y',item.y+'%');dirty=true};
+      const end=()=>{window.removeEventListener('pointermove',move);render()};window.addEventListener('pointermove',move);window.addEventListener('pointerup',end,{once:true});render();
+    }
+    async function load(){
+      if(!isReady){say('Configure a conexão do Supabase para publicar o ateliê.');return}
+      const {data,error}=await client.from('studio_canvas').select('elements').eq('id',1).maybeSingle();
+      if(error){say('Não foi possível carregar o ateliê. Confira a configuração.');return}
+      elements=Array.isArray(data?.elements)?data.elements:[];render();say(elements.length?'':'Ainda não há imagens ou textos publicados.');
+    }
+    async function refreshUser(session){
+      const candidate=session?.user||null;const owner=candidate?.email?.toLowerCase()===OWNER_EMAIL;user=owner?candidate:null;
+      toolbar.classList.toggle('visible',owner);loginPanel.classList.toggle('visible',!owner);
+      $('#hint').textContent=owner?'Arraste para posicionar. Redimensione pela alça, edite textos com duplo clique e salve quando terminar.':'Faça login para adicionar imagens e textos. O acesso de edição é privado.';
+      render();
+    }
+    $('#signin').addEventListener('click',async()=>{
+      if(!isReady){say('A conexão do Supabase ainda precisa ser configurada.');return}
+      const email=$('#email').value.trim().toLowerCase();if(email!==OWNER_EMAIL){say('Este endereço não tem acesso de edição.');return}
+      say('Enviando link seguro…');const {error}=await client.auth.signInWithOtp({email,options:{shouldCreateUser:false,emailRedirectTo:new URL('atelier.html',location.href).href}});say(error?safeError(error):'Confira seu e-mail para entrar no ateliê.');
+    });
+    $('#image-input').addEventListener('change',async(event)=>{
+      if(!user)return;const files=[...event.target.files];
+      for(const file of files){if(!file.type.startsWith('image/'))continue;say('Enviando '+file.name+'…');const path=crypto.randomUUID()+'-'+file.name.replace(/[^a-zA-Z0-9._-]/g,'-');
+        const {error}=await client.storage.from(BUCKET).upload(path,file,{cacheControl:'31536000',upsert:false});if(error){say(safeError(error));continue}
+        const {data}=client.storage.from(BUCKET).getPublicUrl(path);elements.push({id:crypto.randomUUID(),type:'image',src:data.publicUrl,alt:file.name.replace(/\.[^.]+$/,''),x:50,y:50,w:36,z:elements.length+1});dirty=true;render();say('Imagem adicionada. Salve para publicar as alterações.');
+      }event.target.value='';
+    });
+    $('#add-text').addEventListener('click',()=>{const text=prompt('Texto para adicionar ao ateliê:');if(text===null)return;const item={id:crypto.randomUUID(),type:'text',text,x:50,y:50,w:34,z:elements.length+1};elements.push(item);selected=item.id;dirty=true;render();stage.querySelector(`[data-id="${item.id}"]`)?.focus()});
+    $('#delete').addEventListener('click',()=>{elements=elements.filter(item=>item.id!==selected);selected=null;dirty=true;render()});
+    $('#front').addEventListener('click',()=>{const item=elements.find(v=>v.id===selected);if(item){item.z=Math.max(0,...elements.map(v=>v.z))+1;dirty=true;render()}});
+    $('#backward').addEventListener('click',()=>{const item=elements.find(v=>v.id===selected);if(item){item.z=Math.min(0,...elements.map(v=>v.z))-1;dirty=true;render()}});
+    $('#save').addEventListener('click',async()=>{if(!user)return;say('Salvando…');const {error}=await client.from('studio_canvas').upsert({id:1,elements,updated_at:new Date().toISOString()});if(error){say(safeError(error));return}dirty=false;render();say('Alterações salvas e publicadas.')});
+    $('#signout').addEventListener('click',async()=>{await client.auth.signOut();say('Você saiu do ateliê.')});
+    stage.addEventListener('pointerdown',event=>{if(event.target===stage){selected=null;render()}});
+    if(!isReady){say('O ateliê está aguardando a configuração do Supabase.');$('#login').classList.remove('visible')}
+    else {client.auth.onAuthStateChange((_event,session)=>{refreshUser(session)});const {data}=await client.auth.getSession();await refreshUser(data.session);await load()}
+  </script>
+</body>
+</html>
+
