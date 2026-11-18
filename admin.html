@@ -15,7 +15,7 @@
     .logo{display:block;width:170px;max-width:48vw;height:auto}
     h1{margin:0;font-size:28px;font-weight:700;white-space:nowrap}
     main{width:min(1160px,calc(100% - 40px));margin:0 auto 48px}
-    .canvas-tabs{display:flex;justify-content:center;gap:8px;margin:0 auto 16px}
+    .canvas-tabs{position:sticky;top:8px;z-index:900;display:flex;justify-content:center;gap:8px;margin:0 auto 16px;padding:8px 0;background:linear-gradient(var(--bg) 78%,rgba(35,35,35,0));}
     .canvas-tabs button{min-width:112px;letter-spacing:.08em}
     .canvas-tabs button.active{border-color:var(--accent);color:var(--accent)}
     .toolbar,.login-row{display:none;align-items:center;justify-content:center;flex-wrap:wrap;gap:7px;margin:0 auto 14px}
@@ -379,10 +379,13 @@
       dirty=false;render();syncButtons();
       if(error)say('Não foi possível carregar este portfólio.');else say('');
     }
+    let canvasSwitching=false;
     async function switchCanvas(nextId){
-      if(nextId===canvasId)return;
-      if(dirty){say('Salve as alterações antes de trocar de portfólio.');return}
+      if(nextId===canvasId||canvasSwitching)return;
+      canvasSwitching=true;
+      if(dirty&&!await saveCanvas()){canvasSwitching=false;return}
       canvasId=nextId;updateCanvasTabs();say('Carregando…');await load();
+      canvasSwitching=false;
     }
     for(const button of document.querySelectorAll('.canvas-tab')){
       button.addEventListener('click',()=>switchCanvas(Number(button.dataset.canvasId)));
@@ -576,13 +579,16 @@
       for(const item of chosen){item.z=z++;nodes.get(item.id)?.style.setProperty('--z',item.z)}
       if(chosen.length)setDirty('Camada atualizada. Salve para publicar.');
     });
-    $('#save').addEventListener('click',async()=>{
-      if(!user||!dirty)return;
+    async function saveCanvas(){
+      if(!user)return false;
+      if(!dirty)return true;
       say('Salvando…');
-      const {error}=await client.from('studio_canvas').upsert({id:canvasId,elements:[...elements,{id:'__canvas_space',type:'__canvas_space',height:extraSpace,z:0}],updated_at:new Date().toISOString()});
-      if(error){say(error.message);return}
-      dirty=false;syncButtons();say('Portfólio salvo.');
-    });
+      const snapshot=[...elements,{id:'__canvas_space',type:'__canvas_space',height:extraSpace,z:0}];
+      const {error}=await client.from('studio_canvas').upsert({id:canvasId,elements:snapshot,updated_at:new Date().toISOString()});
+      if(error){say(error.message);return false}
+      dirty=false;syncButtons();say('Portfólio salvo.');return true;
+    }
+    $('#save').addEventListener('click',saveCanvas);
     $('#signout').addEventListener('click',async()=>{await client.auth.signOut();say('Sessão encerrada.')});
     document.addEventListener('pointerdown',event=>{
       const active=document.activeElement;
