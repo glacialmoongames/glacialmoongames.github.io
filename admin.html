@@ -255,7 +255,21 @@
     let dragDepth=0;
     function hasImageTransfer(event){
       const types=Array.from(event.dataTransfer?.types||[]);
-      return types.includes('Files')||types.includes('text/uri-list');
+      return types.includes('Files')||types.includes('text/uri-list')||types.includes('text/x-moz-url')||types.includes('text/html');
+    }
+    function getDroppedImageUrl(transfer){
+      const candidates=[
+        ...transfer.getData('text/uri-list').split(/\r?\n/),
+        transfer.getData('text/x-moz-url').split(/\r?\n/)[0],
+        ...transfer.getData('text/plain').split(/\r?\n/)
+      ];
+      const html=transfer.getData('text/html');
+      if(html){const image=new DOMParser().parseFromString(html,'text/html').querySelector('img');if(image?.src)candidates.unshift(image.src)}
+      for(const value of candidates){
+        const candidate=value.trim();if(!candidate||candidate.startsWith('#'))continue;
+        try{const url=new URL(candidate);if(url.protocol==='https:')return url.href}catch{}
+      }
+      return null;
     }
     stage.addEventListener('dragenter',event=>{
       if(!hasImageTransfer(event))return;
@@ -274,7 +288,7 @@
       const transfer=event.dataTransfer;
       if(!transfer)return;
       const files=[...transfer.files].filter(file=>file.type.startsWith('image/'));
-      const uri=transfer.getData('text/uri-list').split(/\r?\n/).find(line=>line.trim()&&!line.startsWith('#'));
+      const uri=getDroppedImageUrl(transfer);
       if(!files.length&&!uri&&!hasImageTransfer(event))return;
       event.preventDefault();dragDepth=0;stage.classList.remove('drop-active');
       if(files.length){await uploadImages(files);return}
