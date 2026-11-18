@@ -243,7 +243,7 @@
         draw(nextEvent.clientX,nextEvent.ctrlKey);
         for(const target of targets){
           const size=nextSizes.get(target.id);
-          if(isText){target.fontScale=size*100/rect.width;nodes.get(target.id)?.style.setProperty('--font-scale',target.fontScale)}
+          if(isText){target.fontScale=size;nodes.get(target.id)?.style.setProperty('--font-scale',target.fontScale)}
           else{target.w=size;nodes.get(target.id)?.style.setProperty('--w',size+'%')}
         }
         setDirty('Tamanho atualizado. Salve para publicar.');
