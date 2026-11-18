@@ -31,7 +31,9 @@
     #composition.drop-active::after{content:'Solte para adicionar';position:absolute;inset:0;z-index:100;display:grid;place-items:center;border:1px dashed var(--accent);border-radius:10px;background:rgba(35,35,35,.88);color:var(--ink);font-size:clamp(18px,3vw,28px);pointer-events:none}
     .piece{position:absolute;left:var(--x);top:var(--y);width:var(--w);z-index:var(--z);transform:translate(-50%,-50%);user-select:none}
     .piece img{display:block;width:100%;height:auto;border-radius:7px;pointer-events:none;user-select:none}
-    .piece.text{color:#e6e6e6;font-family:Arial,Helvetica,sans-serif;font-size:clamp(15px,calc(var(--font-scale,2.1)*1cqw),100px);line-height:1.25;white-space:pre-wrap;overflow-wrap:anywhere}
+    .piece.text{color:#e6e6e6;font-family:Arial,Helvetica,sans-serif;font-size:var(--font-size,clamp(15px,calc(var(--font-scale,2.1)*1cqw),100px));line-height:1.25;white-space:pre-wrap;overflow-wrap:anywhere}
+    .text-content{display:block;width:100%;min-height:1em;white-space:pre-wrap;user-select:text}
+    .text-content[contenteditable=true]{outline:1px dashed var(--accent);outline-offset:3px;cursor:text}
     .piece.selected{outline:1px dashed var(--accent);outline-offset:4px}
     .selection-box{position:absolute;z-index:1000;border:1px solid var(--accent);background:rgba(244,123,32,.14);pointer-events:none}
     .selection-box[hidden]{display:none}
@@ -74,7 +76,7 @@
     const stage=$('#composition'),status=$('#status'),toolbar=$('#toolbar'),login=$('#login');
     const selectionBox=document.createElement('div');selectionBox.className='selection-box';selectionBox.hidden=true;
     const lightbox=$('#lightbox'),lightboxImage=$('#lightbox-image');
-    let elements=[],selectedIds=new Set(),nodes=new Map(),user=null,dirty=false,extraSpace=0;
+    let elements=[],selectedIds=new Set(),nodes=new Map(),user=null,dirty=false,extraSpace=0,copiedTextBoxes=[];
     let overlapCycle={x:NaN,y:NaN,index:0,ids:[]};
     const say=message=>{status.textContent=message};
     const clamp=(value,min,max)=>Math.max(min,Math.min(max,value));
@@ -102,6 +104,7 @@
       node.style.setProperty('--y',item.y+'%');
       node.style.setProperty('--w',item.w+'%');
       node.style.setProperty('--font-scale',(item.fontScale||2.1));
+      if(Number.isFinite(item.fontSize))node.style.setProperty('--font-size',item.fontSize+'px');else node.style.removeProperty('--font-size');
       node.style.setProperty('--z',item.z);
       node.style.transform='translate(-50%,-50%)';
     }
@@ -115,13 +118,27 @@
         img.src=item.previewSrc||item.src;img.alt=item.alt||'';img.loading='lazy';img.decoding='async';img.fetchPriority='low';img.draggable=false;
         node.append(img);
       }else{
-        node.textContent=item.text||'';
+        const content=document.createElement('span');content.className='text-content';content.textContent=item.text||'';node.append(content);
+        content.addEventListener('blur',()=>{
+          if(content.contentEditable!=='true')return;
+          const updated=(content.innerText||'').replace(/\r/g,'').replace(/\n$/,'');
+          content.contentEditable='false';content.textContent=updated;
+          if(updated!==item.text){item.text=updated;setDirty('Texto atualizado. Salve para publicar.')}
+        });
+        node.addEventListener('dblclick',event=>{event.preventDefault();event.stopPropagation();beginTextEdit(item,node)});
       }
       const handle=document.createElement('span');handle.className='resize-handle';handle.setAttribute('aria-hidden','true');node.append(handle);
       if(item.type==='text'){const widthHandle=document.createElement('span');widthHandle.className='width-handle';widthHandle.setAttribute('aria-hidden','true');node.append(widthHandle)}
       node.addEventListener('pointerdown',event=>startPointer(event,item,node));
       nodes.set(item.id,node);
       return node;
+    }
+    function beginTextEdit(item,node){
+      if(!user||item.type!=='text')return;
+      selectedIds=new Set([item.id]);syncSelection();
+      const content=node.querySelector('.text-content');content.contentEditable='true';content.focus();
+      const range=document.createRange();range.selectNodeContents(content);range.collapse(false);
+      const selection=window.getSelection();selection.removeAllRanges();selection.addRange(range);
     }
     function updateStageHeight(){stage.style.height=(stage.clientWidth*2/3+extraSpace)+'px'}
     new ResizeObserver(updateStageHeight).observe(stage);
@@ -136,6 +153,7 @@
     }
     function startPointer(event,item,node){
       if(!user)return;
+      if(node.querySelector('.text-content')?.isContentEditable&&event.target.closest('.text-content'))return;
       if(item.type==='text'&&event.target===node.querySelector('.width-handle')){
         event.preventDefault();event.stopPropagation();selectedIds=new Set([item.id]);syncSelection();
         startTextWidthResize(event,item,node);return;
@@ -224,7 +242,7 @@
           item:target,node:nodes.get(target.id),
           width:bounds.width,height:bounds.height,
           left:bounds.left-rect.left,top:bounds.top-rect.top,
-          startFont:target.fontScale||2.1,startWidth:target.w
+          startFont:target.fontScale||2.1,startFontPx:target.fontSize||((target.fontScale||2.1)*rect.width/100),startWidth:target.w
         };
       });
       const groupBounds=resizingGroup?entries.reduce((box,entry)=>({
@@ -245,11 +263,9 @@
           :1;
         for(const entry of entries){
           if(isText){
-            const startPixels=entry.startFont*rect.width/100;
-            const sizePixels=snap(startPixels+dx,15,100,freeMove);
-            const fontScale=sizePixels*100/rect.width;
-            nextValues.set(entry.item.id,{fontScale});
-            entry.node.style.setProperty('--font-scale',fontScale);
+            const sizePixels=snap(entry.startFontPx+dx,15,100,freeMove);
+            nextValues.set(entry.item.id,{fontSize:sizePixels});
+            entry.node.style.setProperty('--font-size',sizePixels+'px');
             continue;
           }
           const minWidth=rect.width*.05,maxWidth=rect.width;
@@ -276,7 +292,7 @@
         for(const entry of entries){
           const value=nextValues.get(entry.item.id);
           if(!value)continue;
-          if(isText){entry.item.fontScale=value.fontScale;entry.node.style.setProperty('--font-scale',value.fontScale)}
+          if(isText){entry.item.fontSize=value.fontSize;entry.node.style.setProperty('--font-size',value.fontSize+'px')}
           else{
             entry.item.x=value.x;entry.item.y=value.y;entry.item.w=value.w;
             entry.node.style.transform='translate(-50%,-50%)';
@@ -329,7 +345,7 @@
       toolbar.classList.toggle('visible',owner);
       login.classList.toggle('visible',!owner);
       stage.classList.toggle('editor-grid',owner);
-      $('#hint').textContent=owner?'Solte imagens ou links na prévia para adicioná-los. Clique repetidamente em itens sobrepostos para alternar a seleção. Arraste no espaço vazio para selecionar vários; Shift+clique adiciona à seleção. Movimento e redimensionamento alinham aos pontos do grid; segure Ctrl para ignorá-lo. Na caixa de texto, a alça lateral ajusta a largura e a inferior o tamanho da fonte.':'Entre para editar o portfólio.';
+      $('#hint').textContent=owner?'Solte imagens ou links na prévia para adicioná-los. Clique repetidamente em itens sobrepostos para alternar a seleção. Arraste no espaço vazio para selecionar vários; Shift+clique adiciona à seleção. Movimento e redimensionamento alinham aos pontos do grid; segure Ctrl para ignorá-lo. Na caixa de texto, dê duplo clique para editar; a alça lateral ajusta a largura e a inferior o tamanho da fonte. Ctrl+C/Ctrl+V copia e cola caixas selecionadas.':'Entre para editar o portfólio.';
       syncButtons();
       if(!owner&&!elements.length)say('');
     }
@@ -473,14 +489,13 @@
       if(!user)return;
       const text=prompt('Texto para o portfólio:','Seu texto');
       if(text===null||!text.trim())return;
-      const item={id:crypto.randomUUID(),type:'text',text:text.trim(),x:50,y:50,w:34,fontScale:2.1,z:Math.max(0,...elements.map(entry=>entry.z))+1};
+      const item={id:crypto.randomUUID(),type:'text',text:text.trim(),x:50,y:50,w:34,fontScale:2.1,fontSize:32,z:Math.max(0,...elements.map(entry=>entry.z))+1};
       elements.push(item);selectedIds=new Set([item.id]);stage.append(createPiece(item));setDirty('Texto adicionado. Salve para publicar.');syncSelection();
     });
     $('#edit-text').addEventListener('click',()=>{
       const item=elements.find(entry=>selectedIds.has(entry.id));
       if(!item||item.type!=='text')return;
-      const updated=prompt('Editar texto:',item.text);
-      if(updated===null)return;item.text=updated;const node=nodes.get(item.id);if(node)node.firstChild.textContent=updated;setDirty('Texto atualizado. Salve para publicar.');
+      const node=nodes.get(item.id);if(node)beginTextEdit(item,node);
     });
     $('#view-image').addEventListener('click',()=>{const item=elements.find(entry=>selectedIds.has(entry.id));if(item?.type==='image')openLightbox(item)});
     function removeSelection(){
@@ -489,6 +504,24 @@
       elements=elements.filter(item=>!selectedIds.has(item.id));selectedIds.clear();setDirty('Seleção removida. Salve para publicar.');syncSelection();
     }
     $('#delete').addEventListener('click',removeSelection);
+    window.addEventListener('keydown',event=>{
+      const target=event.target,editing=target?.isContentEditable||target instanceof HTMLInputElement||target instanceof HTMLTextAreaElement;
+      if(!user||editing||!(event.ctrlKey||event.metaKey))return;
+      const key=event.key.toLowerCase();
+      if(key==='c'){
+        const selected=elements.filter(item=>selectedIds.has(item.id)&&item.type==='text');
+        if(!selected.length)return;
+        copiedTextBoxes=selected.map(item=>({...item}));event.preventDefault();say(selected.length+' caixa(s) de texto copiada(s).');
+      }else if(key==='v'&&copiedTextBoxes.length){
+        event.preventDefault();
+        const rect=stage.getBoundingClientRect(),offsetX=16/rect.width*100,offsetY=16/rect.height*100;
+        let z=Math.max(0,...elements.map(item=>item.z));
+        const copies=copiedTextBoxes.map(item=>({...item,id:crypto.randomUUID(),x:clamp(item.x+offsetX,0,100),y:clamp(item.y+offsetY,0,100),z:++z}));
+        elements.push(...copies);selectedIds=new Set(copies.map(item=>item.id));
+        for(const item of copies)stage.insertBefore(createPiece(item),selectionBox);
+        setDirty(copies.length+' caixa(s) de texto colada(s). Salve para publicar.');syncSelection();
+      }
+    });
     window.addEventListener('keydown',event=>{
       const target=event.target;
       if(event.key!=='Delete'||target instanceof HTMLInputElement||target instanceof HTMLTextAreaElement||target?.isContentEditable)return;
