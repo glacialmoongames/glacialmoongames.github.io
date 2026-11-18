@@ -167,10 +167,9 @@
       const startX=event.clientX,startY=event.clientY,rect=stage.getBoundingClientRect();
       const startPositions=moving.map(entry=>({item:entry,node:nodes.get(entry.id),x:entry.x,y:entry.y}));
       const gridSize=24,finalPositions=new Map();
-      let raf=0,lastX=startX,lastY=startY,moved=false;
+      let raf=0,lastX=startX,lastY=startY,lastFreeMove=false;
       const draw=(clientX,clientY,freeMove=false)=>{
         const dx=clientX-startX,dy=clientY-startY;
-        moved=Math.abs(dx)+Math.abs(dy)>1;
         for(const entry of startPositions){
           const rawX=entry.x/100*rect.width+dx,rawY=entry.y/100*rect.height+dy;
           const pxX=freeMove?rawX:Math.round(rawX/gridSize)*gridSize;
@@ -181,8 +180,8 @@
         }
       };
       const move=nextEvent=>{
-        lastX=nextEvent.clientX;lastY=nextEvent.clientY;
-        if(!raf)raf=requestAnimationFrame(()=>{raf=0;draw(lastX,lastY,nextEvent.ctrlKey)});
+        lastX=nextEvent.clientX;lastY=nextEvent.clientY;lastFreeMove=nextEvent.ctrlKey;
+        if(!raf)raf=requestAnimationFrame(()=>{raf=0;draw(lastX,lastY,lastFreeMove)});
       };
       const finish=nextEvent=>{
         window.removeEventListener('pointermove',move);
