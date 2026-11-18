@@ -56,7 +56,7 @@
       piece.style.setProperty('--z',item.z);
       if(item.type==='image'){
         const img=document.createElement('img');
-        img.src=item.src;img.alt=item.alt||'';img.loading='lazy';img.decoding='async';img.draggable=true;
+        img.src=item.previewSrc||item.src;img.alt=item.alt||'';img.loading='lazy';img.decoding='async';img.fetchPriority='low';img.draggable=true;
         img.addEventListener('click',()=>{lightboxImage.src=item.src;lightboxImage.alt=item.alt||'';lightbox.hidden=false;document.body.style.overflow='hidden'});
         piece.append(img);
       }else if(item.type==='text'){
