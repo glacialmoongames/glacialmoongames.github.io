@@ -27,13 +27,10 @@
     .lightbox[hidden]{display:none}
     .lightbox img{display:block;max-width:min(96vw,1800px);max-height:94vh;width:auto;height:auto;object-fit:contain;border-radius:7px;cursor:default}
     @media(max-width:600px){header{padding:27px 14px 22px}.masthead{gap:12px}.logo{width:110px}h1{font-size:24px}.canvas-tabs{justify-content:flex-start;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin-bottom:18px}.canvas-tabs::-webkit-scrollbar{display:none}.canvas-tabs a{flex:0 0 auto;padding:8px 10px;font-size:11px;white-space:nowrap}main{width:calc(100% - 28px)}}
-  @media(max-width:600px){
-      #composition{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-flow:row;column-gap:12px;row-gap:16px;height:auto!important;min-height:var(--mobile-min-height,0px);aspect-ratio:auto}
-      #composition .piece{position:relative;left:auto;top:auto;width:100%;transform:none;order:var(--mobile-order,0);align-self:start}
-      #composition .piece:not(.text){grid-column:auto;aspect-ratio:1/1;display:grid;place-items:center}
-      #composition .piece img{width:100%;height:100%;object-fit:contain}
-      #composition .piece.text{grid-column:1/-1;width:100%}
-    }
+  #composition{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-flow:row;align-content:start;column-gap:16px;row-gap:20px;height:auto!important;min-height:var(--mobile-min-height,0px);aspect-ratio:auto}
+  #composition .piece:not(.text){position:relative;left:auto;top:auto;width:100%;transform:none;aspect-ratio:1/1;display:grid;place-items:center;align-self:start}
+  #composition .piece img{width:100%;height:100%;object-fit:contain}
+  #composition .piece.text{position:absolute;left:var(--x);top:var(--y);width:var(--w);transform:translate(-50%,-50%)}
     </style>
 </head>
 <body>
@@ -64,11 +61,14 @@
     const saved=Array.isArray(data?.elements)?data.elements:[];
     const space=saved.find(item=>item.type==='__canvas_space');
     const extraSpace=Number.isFinite(space?.height)?Math.max(0,space.height):0;
+    const items=saved.filter(item=>item.type!=='__canvas_space');
+    const legacySpatial=[...items].sort((a,b)=>(Number(a.y)||0)-(Number(b.y)||0)||(Number(a.x)||0)-(Number(b.x)||0));
+    const legacyOrder=new Map(legacySpatial.map((item,index)=>[item.id,index]));
+    items.sort((a,b)=>(Number.isFinite(a.gridOrder)?a.gridOrder:legacyOrder.get(a.id))-(Number.isFinite(b.gridOrder)?b.gridOrder:legacyOrder.get(b.id)));
     const updateStageHeight=()=>{const height=stage.clientWidth*2/3+extraSpace*(stage.clientWidth/1160);stage.style.setProperty('--mobile-min-height',height+'px');stage.style.height=height+'px'};
     new ResizeObserver(updateStageHeight).observe(stage);
     updateStageHeight();
-    for(const item of saved){
-      if(item.type==='__canvas_space')continue;
+    for(const item of items){
       const piece=document.createElement('div');
       piece.className='piece'+(item.type==='text'?' text':'');
       piece.style.setProperty('--x',item.x+'%');
@@ -76,7 +76,7 @@
       piece.style.setProperty('--w',item.w+'%');
       piece.style.setProperty('--font-scale',Number.isFinite(item.fontSize)?item.fontSize/11.6:(item.fontScale||2.1));
       piece.style.setProperty('--z',item.z);
-      piece.style.setProperty('--mobile-order',Math.round((Number(item.y)||0)*1000000+(Number(item.x)||0)*1000+(Number(item.z)||0)));
+
       if(item.type==='image'){
         const img=document.createElement('img');
         img.src=item.previewSrc||item.src;img.alt=item.alt||'';img.loading='lazy';img.decoding='async';img.fetchPriority='low';img.draggable=true;
