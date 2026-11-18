@@ -28,7 +28,7 @@
 <body>
   <header><div class="masthead"><img class="logo" src="logo.png" alt="Glacial Moon Games"><h1>Portfólio</h1></div></header>
   <main><section id="composition" aria-label="Portfólio"></section></main>
-  <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Imagem em tamanho cheio" hidden><img id="lightbox-image" alt=""></div>
+  <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Imagem em tamanho cheio" hidden><img id="lightbox-image" alt="" draggable="true"></div>
   <script type="module">
     import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.119.0';
     const client=createClient('https://sdchkvhzzcmpyszqtxlw.supabase.co','sb_publishable_hlQm6wS9WnADEVupUCqQ8Q_ulClFteW');
@@ -48,8 +48,8 @@
       piece.style.setProperty('--z',item.z);
       if(item.type==='image'){
         const img=document.createElement('img');
-        img.src=item.src;img.alt=item.alt||'';img.loading='lazy';img.decoding='async';
-        img.addEventListener('click',()=>{lightboxImage.src=img.currentSrc||img.src;lightboxImage.alt=img.alt;lightbox.hidden=false;document.body.style.overflow='hidden'});
+        img.src=item.src;img.alt=item.alt||'';img.loading='lazy';img.decoding='async';img.draggable=true;
+        img.addEventListener('click',()=>{lightboxImage.src=item.src;lightboxImage.alt=item.alt||'';lightbox.hidden=false;document.body.style.overflow='hidden'});
         piece.append(img);
       }else if(item.type==='text'){
         piece.textContent=item.text||'';
