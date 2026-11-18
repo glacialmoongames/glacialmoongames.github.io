@@ -36,7 +36,7 @@
     #composition.drop-active::after{content:'Solte para adicionar';position:absolute;inset:0;z-index:100;display:grid;place-items:center;border:1px dashed var(--accent);border-radius:10px;background:rgba(35,35,35,.88);color:var(--ink);font-size:clamp(18px,3vw,28px);pointer-events:none}
     .piece{position:absolute;left:var(--x);top:var(--y);width:var(--w);z-index:var(--z);transform:translate(-50%,-50%);user-select:none}
     .piece img{display:block;width:100%;height:auto;border-radius:7px;pointer-events:none;user-select:none}
-    .piece.text{color:#e6e6e6;font-family:Arial,Helvetica,sans-serif;font-size:var(--font-size,clamp(15px,calc(var(--font-scale,2.1)*1cqw),100px));line-height:1.25;white-space:pre-wrap;overflow-wrap:anywhere}
+    .piece.text{color:#e6e6e6;font-family:Arial,Helvetica,sans-serif;font-size:clamp(12px,calc(var(--font-scale,2.1)*1cqw),100px);line-height:1.25;white-space:pre-wrap;overflow-wrap:anywhere}
     .text-content{display:block;width:100%;min-height:1em;white-space:pre-wrap;user-select:text}
     .text-content[contenteditable=true]{outline:1px dashed var(--accent);outline-offset:3px;cursor:text}
     .piece.selected{outline:1px dashed var(--accent);outline-offset:4px}
@@ -125,8 +125,7 @@
       node.style.setProperty('--x',item.x+'%');
       node.style.setProperty('--y',item.y+'%');
       node.style.setProperty('--w',item.w+'%');
-      node.style.setProperty('--font-scale',(item.fontScale||2.1));
-      if(Number.isFinite(item.fontSize))node.style.setProperty('--font-size',item.fontSize+'px');else node.style.removeProperty('--font-size');
+      node.style.setProperty('--font-scale',Number.isFinite(item.fontSize)?item.fontSize/11.6:(item.fontScale||2.1));
       node.style.setProperty('--z',item.z);
       node.style.transform='translate(-50%,-50%)';
     }
@@ -265,7 +264,7 @@
           item:target,node:nodes.get(target.id),
           width:bounds.width,height:bounds.height,
           left:bounds.left-rect.left,top:bounds.top-rect.top,
-          startFont:target.fontScale||2.1,startFontPx:target.fontSize||((target.fontScale||2.1)*rect.width/100),startWidth:target.w
+          startFont:target.fontScale||2.1,startFontPx:Number.isFinite(target.fontSize)?target.fontSize:(target.fontScale||2.1)*11.6,startWidth:target.w
         };
       });
       const groupBounds=resizingGroup?entries.reduce((box,entry)=>({
@@ -286,9 +285,9 @@
           :1;
         for(const entry of entries){
           if(isText){
-            const sizePixels=snap(entry.startFontPx+dx,15,100,freeMove);
+            const sizePixels=snap(entry.startFontPx+dx*1160/rect.width,16,96,freeMove);
             nextValues.set(entry.item.id,{fontSize:sizePixels});
-            entry.node.style.setProperty('--font-size',sizePixels+'px');
+            entry.node.style.setProperty('--font-scale',sizePixels/11.6);
             continue;
           }
           const minWidth=rect.width*.05,maxWidth=rect.width;
@@ -315,7 +314,7 @@
         for(const entry of entries){
           const value=nextValues.get(entry.item.id);
           if(!value)continue;
-          if(isText){entry.item.fontSize=value.fontSize;entry.node.style.setProperty('--font-size',value.fontSize+'px')}
+          if(isText){entry.item.fontSize=value.fontSize;entry.node.style.setProperty('--font-scale',value.fontSize/11.6)}
           else{
             entry.item.x=value.x;entry.item.y=value.y;entry.item.w=value.w;
             entry.node.style.transform='translate(-50%,-50%)';
